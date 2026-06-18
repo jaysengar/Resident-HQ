@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from("users")
         .select("role, name, email, phone, society_id, flat_no, societies(slug, name, address)")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
         
       if (error || !data) {
         throw new Error("User profile not found");

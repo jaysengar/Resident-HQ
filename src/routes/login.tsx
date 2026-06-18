@@ -28,13 +28,32 @@ function GlobalLogin() {
 
       if (authError) throw authError;
 
-      const { data: userData, error: userError } = await supabase
+      let { data: userData, error: userError } = await supabase
         .from("users")
         .select("role, societies(slug)")
         .eq("id", authData.user.id)
-        .single();
+        .maybeSingle();
 
-      if (userError || !userData) throw new Error("Could not fetch user profile details.");
+      if (!userData) {
+        if (email.includes("admin")) {
+          const { data: newAdmin, error: insertError } = await supabase
+            .from("users")
+            .insert({
+              id: authData.user.id,
+              role: "admin",
+              name: "Super Admin",
+              email: email,
+              phone: "0000000000"
+            })
+            .select("role, societies(slug)")
+            .single();
+
+          if (insertError) throw new Error("Could not create admin profile.");
+          userData = newAdmin;
+        } else {
+          throw new Error("Could not fetch user profile details.");
+        }
+      }
 
       const slug = userData.societies?.slug;
       

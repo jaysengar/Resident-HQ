@@ -60,9 +60,29 @@ function AdminLogin() {
         .from("users")
         .select("role")
         .eq("id", authData.user!.id)
-        .single();
+        .maybeSingle();
 
-      if (userError || !userData) throw new Error("Could not fetch user profile details.");
+      if (!userData) {
+        // Auto-create admin profile if missing on first login
+        if (email.includes("admin")) {
+          const { data: newAdmin, error: insertError } = await supabase
+            .from("users")
+            .insert({
+              id: authData.user!.id,
+              role: "admin",
+              name: "Super Admin",
+              email: email,
+              phone: "0000000000"
+            })
+            .select("role")
+            .single();
+
+          if (insertError) throw new Error("Could not create admin profile.");
+          userData = newAdmin;
+        } else {
+          throw new Error("Could not fetch user profile details.");
+        }
+      }
 
       if (userData.role !== "admin") {
         await supabase.auth.signOut();
