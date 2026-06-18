@@ -3,19 +3,19 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vite";
+import { nitro } from "nitro/vite";
 
 export default defineConfig({
   plugins: [
     tsConfigPaths(),
     tailwindcss(),
     tanstackStart({
-      // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-      // nitro/vite builds from this
       server: { 
         preset: "vercel",
         entry: "server" 
       },
     }),
+    nitro(),
     react(),
   ],
   resolve: {
