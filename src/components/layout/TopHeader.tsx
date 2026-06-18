@@ -21,9 +21,9 @@ export function TopHeader({
           </div>
         )}
         <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">{subtitle}</p>
+          <p className="text-[11px] uppercase tracking-widest font-bold text-white/50">{subtitle}</p>
           <h1
-            className={`truncate font-semibold text-foreground ${avatar ? "text-lg" : "text-2xl font-bold tracking-tight"}`}
+            className={`truncate font-extrabold tracking-tight text-white ${avatar ? "text-xl mt-0.5" : "text-3xl"}`}
           >
             {title}
           </h1>
@@ -55,10 +55,10 @@ export function SectionTitle({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+        <h2 className="text-[11px] uppercase tracking-[0.2em] font-extrabold text-white/70">{title}</h2>
         {badge && (
-          <span className="flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" /> {badge}
+          <span className="flex items-center gap-1.5 rounded-full bg-success/20 border border-success/30 px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase text-success shadow-[0_0_10px_rgba(var(--color-success),0.2)]">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success shadow-[0_0_8px_var(--color-success)]" /> {badge}
           </span>
         )}
       </div>

@@ -13,7 +13,7 @@ export function BottomNavigation() {
   return (
     <nav className="absolute bottom-0 left-0 right-0 z-20 pb-4">
       <div
-        className="mx-4 mb-2 rounded-[2rem] border border-white/10 bg-zinc-900/90 px-2 py-1.5 backdrop-blur-2xl shadow-2xl"
+        className="mx-4 mb-2 rounded-[2rem] border border-white/[0.08] bg-card/90 px-2 py-1.5 backdrop-blur-3xl shadow-elevated"
       >
         <div className="grid grid-cols-4">
           {items.map((it) => {

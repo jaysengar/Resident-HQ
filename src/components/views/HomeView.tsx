@@ -66,10 +66,10 @@ export function HomeView() {
         />
 
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05, duration: 0.4, ease: "easeOut" }}
-        className="mt-6 rounded-[24px] bg-zinc-900/80 backdrop-blur-md p-6 border border-white/5 shadow-2xl relative overflow-hidden"
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.05 }}
+        className="mt-6 rounded-[28px] bg-card/80 backdrop-blur-xl p-6 border border-white/[0.08] shadow-elevated relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] -z-10 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-[60px] -z-10 pointer-events-none" />
@@ -86,19 +86,19 @@ export function HomeView() {
           <span className="text-[11px] font-semibold text-white/60 uppercase tracking-wide">{currentUser.flatType}</span>
         </div>
 
-        <div className="mt-6 flex flex-col gap-2.5 bg-black/40 backdrop-blur-md rounded-[1.25rem] p-4 border border-white/5">
+        <div className="mt-6 flex flex-col gap-3 bg-black/50 backdrop-blur-md rounded-[20px] p-5 border border-white/[0.04] shadow-inner">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-white/40 uppercase font-bold tracking-wider">Name</span>
-            <span className="text-xs font-semibold text-white/90">{currentUser.name}</span>
+            <span className="text-[10px] text-white/50 uppercase font-bold tracking-widest">Name</span>
+            <span className="text-xs font-semibold text-white">{currentUser.name}</span>
           </div>
-          <div className="w-full h-px bg-white/5" />
+          <div className="w-full h-px bg-white/[0.04]" />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-white/40 uppercase font-bold tracking-wider">Email</span>
+            <span className="text-[10px] text-white/50 uppercase font-bold tracking-widest">Email</span>
             <span className="text-xs font-semibold text-white/90">{currentUser.email || "resident@residenthq.app"}</span>
           </div>
-          <div className="w-full h-px bg-white/5" />
+          <div className="w-full h-px bg-white/[0.04]" />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-white/40 uppercase font-bold tracking-wider">Phone</span>
+            <span className="text-[10px] text-white/50 uppercase font-bold tracking-widest">Phone</span>
             <span className="text-xs font-semibold text-white/90">{currentUser.phone || "N/A"}</span>
           </div>
         </div>
@@ -108,22 +108,22 @@ export function HomeView() {
         <SectionTitle title="Quick Actions" />
         <div className="mt-5 grid grid-cols-3 gap-4">
           {actions.map((a, i) => (
-            <motion.button
+              <motion.button
               key={a.label}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.05 }}
-              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: 15, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.1 + i * 0.05 }}
+              whileTap={{ scale: 0.92 }}
               onClick={a.onClick}
               className="group flex flex-col items-center gap-3"
             >
               <div
-                className={`grid h-[56px] w-[56px] place-items-center rounded-full bg-zinc-900 text-foreground group-hover:bg-zinc-800 transition-colors duration-200 border border-white/5 shadow-lg relative`}
+                className={`grid h-[60px] w-[60px] place-items-center rounded-2xl bg-card text-foreground group-hover:bg-zinc-800/80 transition-all duration-300 border border-white/[0.08] shadow-card relative overflow-hidden`}
               >
-                <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${a.tint} opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-300`} />
-                <a.icon size={22} strokeWidth={1.5} className="relative z-10" />
+                <div className={`absolute inset-0 bg-gradient-to-br ${a.tint} opacity-0 group-hover:opacity-25 transition-opacity duration-300 blur-xl`} />
+                <a.icon size={24} strokeWidth={1.5} className="relative z-10 text-white/80 group-hover:text-white transition-colors" />
               </div>
-              <span className="text-xs font-medium text-foreground/80 text-center leading-tight">
+              <span className="text-[11px] font-bold tracking-wide text-foreground/70 text-center leading-tight">
                 {a.label}
               </span>
             </motion.button>

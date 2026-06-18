@@ -461,12 +461,12 @@ export const serverGetAllPayments = createServerFn({ method: "POST" }).inputVali
     const admin = getSupabaseAdmin();
     await verifyServerAuth(admin, data.accessToken, ["admin"]);
 
-    const { data, error } = await admin
+    const { data: responseData, error } = await admin
       .from("payments")
       .select("month, amount, society_id");
 
     if (error) throw new Error(error.message);
-    return data || [];
+    return responseData || [];
   },
 );
 
@@ -575,14 +575,14 @@ export const serverGetSystemLogs = createServerFn({ method: "POST" }).inputValid
     const admin = getSupabaseAdmin();
     await verifyServerAuth(admin, data.accessToken, ["admin"]);
 
-    const { data, error } = await admin
+    const { data: responseData, error } = await admin
       .from("system_logs")
       .select("*")
       .order("timestamp", { ascending: false })
       .limit(100);
 
     if (error) throw new Error(error.message);
-    return data || [];
+    return responseData || [];
   }
 );
 
