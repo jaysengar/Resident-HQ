@@ -65,9 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         flat: data.flat_no,
         avatar: data.name[0].toUpperCase(),
       });
-    } catch (err) {
-      console.error(err);
-      
+    } catch (err: any) {
       // Fallback for Super Admin if RLS blocks the fetch
       const { data: { user } } = await supabase.auth.getUser();
       if (user?.email?.includes("admin")) {
@@ -79,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           societyId: "",
         });
       } else {
+        console.error(err);
         setUser(null);
       }
     } finally {
