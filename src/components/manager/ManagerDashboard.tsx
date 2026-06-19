@@ -15,6 +15,8 @@ import {
 import { useManager } from "@/context/ManagerContext";
 import { CreatePollModal } from "@/components/modals/CreatePollModal";
 
+import { SkeletonCard, SkeletonTable } from "@/components/ui/SkeletonCard";
+
 export function ManagerDashboard() {
   const { stats, monthlyData, loading, fetchDashboard } = useManager();
   const [pollOpen, setPollOpen] = useState(false);
@@ -26,9 +28,17 @@ export function ManagerDashboard() {
   if (loading || !stats) {
     return (
       <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-28 animate-pulse rounded-2xl bg-white/5 border border-white/10" />
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <SkeletonCard lines={2} />
+          <SkeletonCard lines={2} />
+          <SkeletonCard lines={2} />
+        </div>
+        <SkeletonTable rows={5} />
+        <div className="grid grid-cols-3 gap-4">
+          <SkeletonCard lines={1} />
+          <SkeletonCard lines={1} />
+          <SkeletonCard lines={1} />
+        </div>
       </div>
     );
   }

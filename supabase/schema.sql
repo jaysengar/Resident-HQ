@@ -421,6 +421,54 @@ on conflict do nothing;
 
 create policy "Service categories viewable by everyone." on service_categories for select using (true);
 
+-- 17.5 Emergencies / SOS Table
+create table if not exists emergencies (
+    id uuid primary key default uuid_generate_v4(),
+    society_id uuid references societies(id) on delete cascade not null,
+    flat_number text not null,
+    user_id uuid references users(id) on delete cascade not null,
+    status text default 'active' check (status in ('active', 'resolved', 'false_alarm')),
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    resolved_at timestamp with time zone
+);
+
+alter table emergencies enable row level security;
+create policy "Society members can view emergencies." on emergencies for select using (
+  society_id = get_my_society_id()
+);
+create policy "Residents can insert emergencies." on emergencies for insert with check (
+  society_id = get_my_society_id()
+);
+create policy "Guards and Managers can update emergencies." on emergencies for update using (
+  society_id = get_my_society_id()
+);
+
+-- 17.6 NOC / Move Requests
+create table if not exists noc_requests (
+    id uuid primary key default uuid_generate_v4(),
+    society_id uuid references societies(id) on delete cascade not null,
+    user_id uuid references users(id) on delete cascade not null,
+    flat_number text not null,
+    type text not null check (type in ('Move-In', 'Move-Out')),
+    moving_date timestamp with time zone not null,
+    reason text,
+    status text default 'Pending' check (status in ('Pending', 'Approved', 'Rejected')),
+    admin_notes text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table noc_requests enable row level security;
+create policy "Society members can view noc requests." on noc_requests for select using (
+  society_id = get_my_society_id()
+);
+create policy "Residents can insert noc requests." on noc_requests for insert with check (
+  society_id = get_my_society_id()
+);
+create policy "Managers can update noc requests." on noc_requests for update using (
+  society_id = get_my_society_id()
+);
+
 -- Enable realtime on tables (after ALL table definitions)
 begin;
   drop publication if exists supabase_realtime;
@@ -434,6 +482,8 @@ alter publication supabase_realtime add table polls;
 alter publication supabase_realtime add table payments;
 alter publication supabase_realtime add table bills;
 alter publication supabase_realtime add table notifications;
+alter publication supabase_realtime add table emergencies;
+alter publication supabase_realtime add table noc_requests;
 
 -- 18. Society Settings
 create table if not exists society_settings (

@@ -9,8 +9,10 @@ import { NewTicketModal } from "@/components/modals/NewTicketModal";
 import { InviteGuestModal } from "@/components/modals/InviteGuestModal";
 import { ActivePollModal } from "@/components/modals/ActivePollModal";
 import { AllNoticesModal } from "@/components/modals/AllNoticesModal";
+import { NocRequestModal } from "@/components/modals/NocRequestModal";
 import { EmptyState } from "@/components/ui/EmptyState";
-
+import { SkeletonCard, SkeletonRow } from "@/components/ui/SkeletonCard";
+import { Truck } from "lucide-react";
 
 
 export function HomeView() {
@@ -20,10 +22,11 @@ export function HomeView() {
     if (hour < 17) return "Good afternoon";
     return "Good evening";
   };
-  const { currentUser, gateAlerts, announcements, setTab } = useApp();
+  const { currentUser, gateAlerts, announcements, setTab, dataReady } = useApp();
   const [ticketOpen, setTicketOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [noticesOpen, setNoticesOpen] = useState(false);
+  const [nocOpen, setNocOpen] = useState(false);
   const [inviteType, setInviteType] = useState<"Visitor" | "Delivery">("Visitor");
 
   const actions = [
@@ -50,6 +53,12 @@ export function HomeView() {
       icon: TicketIcon,
       tint: "from-orange-500 to-rose-500",
       onClick: () => setTicketOpen(true),
+    },
+    {
+      label: "Moving NOC",
+      icon: Truck,
+      tint: "from-violet-500 to-fuchsia-500",
+      onClick: () => setNocOpen(true),
     },
   ];
 
@@ -134,23 +143,31 @@ export function HomeView() {
       <section className="mt-8">
         <SectionTitle title="Gate Alerts" badge={pending.length > 0 ? "Live" : undefined} />
         <div className="mt-4 space-y-3">
-          <AnimatePresence>
-            {gateAlerts.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="rounded-[20px] border border-white/5 bg-zinc-900/50 p-6 flex flex-col items-center justify-center text-center shadow-lg"
-              >
-                <div className="h-10 w-10 rounded-full bg-zinc-800/80 flex items-center justify-center mb-3 border border-white/5">
-                  <ShieldCheck size={20} className="text-white/60" />
-                </div>
-                <p className="text-sm font-medium text-white/90">No pending alerts</p>
-                <p className="text-[11px] text-white/50 mt-1">You're all caught up.</p>
-              </motion.div>
-            ) : (
-              gateAlerts.map((a) => <GateAlertCard key={a.id} alert={a} />)
-            )}
-          </AnimatePresence>
+          {!dataReady ? (
+            // Loading skeletons
+            <>
+              <SkeletonCard lines={2} />
+              <SkeletonCard lines={2} />
+            </>
+          ) : (
+            <AnimatePresence>
+              {gateAlerts.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="rounded-[20px] border border-white/5 bg-zinc-900/50 p-6 flex flex-col items-center justify-center text-center shadow-lg"
+                >
+                  <div className="h-10 w-10 rounded-full bg-zinc-800/80 flex items-center justify-center mb-3 border border-white/5">
+                    <ShieldCheck size={20} className="text-white/60" />
+                  </div>
+                  <p className="text-sm font-medium text-white/90">No pending alerts</p>
+                  <p className="text-[11px] text-white/50 mt-1">You're all caught up.</p>
+                </motion.div>
+              ) : (
+                gateAlerts.map((a) => <GateAlertCard key={a.id} alert={a} />)
+              )}
+            </AnimatePresence>
+          )}
         </div>
       </section>
 
@@ -161,15 +178,23 @@ export function HomeView() {
           onAction={() => setNoticesOpen(true)}
         />
         <div className="mt-4 space-y-3">
-          {announcements.slice(0, 5).map((n) => (
-            <NoticeCard key={n.id} title={n.title} body={n.body} time={n.time} />
-          ))}
-          {announcements.length === 0 && (
+          {!dataReady ? (
+            // Loading skeletons
+            <>
+              <SkeletonCard lines={3} />
+              <SkeletonCard lines={2} />
+              <SkeletonCard lines={3} />
+            </>
+          ) : announcements.length === 0 ? (
             <EmptyState
               icon={Bell}
               title="No announcements yet"
               description="You'll see notices from your society management here."
             />
+          ) : (
+            announcements.slice(0, 5).map((n) => (
+              <NoticeCard key={n.id} title={n.title} body={n.body} time={n.time} />
+            ))
           )}
         </div>
       </section>
@@ -184,6 +209,7 @@ export function HomeView() {
       <InviteGuestModal open={inviteOpen} onClose={() => setInviteOpen(false)} initialType={inviteType} />
       <ActivePollModal />
       <AllNoticesModal open={noticesOpen} onClose={() => setNoticesOpen(false)} announcements={announcements} />
+      <NocRequestModal open={nocOpen} onClose={() => setNocOpen(false)} />
     </div>
   );
 }

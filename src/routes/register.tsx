@@ -189,12 +189,6 @@ function PublicRegisterPage() {
     setProvisioning(true);
 
     try {
-      const { createPublicRazorpayOrder } = await import("@/lib/api/api");
-      const { serverVerifyRazorpayPayment } = await import("@/lib/api/payment.functions");
-
-      const amount = selectedPlan.price;
-      const orderData = await createPublicRazorpayOrder(amount);
-
       const proceedWithOnboarding = async () => {
         let stepInterval = setInterval(() => {
           setCurrentStep((prev) => {
@@ -213,12 +207,6 @@ function PublicRegisterPage() {
             totalFlats: selectedPlan.maxFlats,
             adminEmail,
             subscriptionPlan: selectedPlan.id,
-            // We pass the payment details that were generated
-            paymentDetails: (window as any)._lastPaymentDetails || {
-              orderId: orderData.orderId,
-              paymentId: "mock-payment-id",
-              signature: "mock-signature"
-            }
           },
         });
 
@@ -236,44 +224,7 @@ function PublicRegisterPage() {
         }
       };
 
-      const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-      if (!res) {
-        throw new Error("Razorpay SDK failed to load");
-      }
-
-      const options = {
-        key: orderData.razorpayKeyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        name: "Resident HQ",
-        description: `${selectedPlan.name} Plan — ₹${selectedPlan.price.toLocaleString("en-IN")}/mo`,
-        order_id: orderData.orderId,
-        handler: async (response: any) => {
-          // Verify on backend inside serverPublicOnboardSociety
-          (window as any)._lastPaymentDetails = {
-            orderId: response.razorpay_order_id,
-            paymentId: response.razorpay_payment_id,
-            signature: response.razorpay_signature,
-          };
-          await proceedWithOnboarding();
-        },
-        modal: {
-          ondismiss: function () {
-            setProvisioning(false);
-            toast.error("Payment cancelled");
-          },
-        },
-        prefill: {
-          name: "Admin",
-          email: adminEmail,
-        },
-        theme: {
-          color: selectedPlan.color === "emerald" ? "#10b981" : selectedPlan.color === "blue" ? "#3b82f6" : "#f59e0b",
-        },
-      };
-
-      const paymentObject = new (window as any).Razorpay(options);
-      paymentObject.open();
+      await proceedWithOnboarding();
     } catch (err: any) {
       toast.error(err.message || "Failed to start onboarding");
       setProvisioning(false);

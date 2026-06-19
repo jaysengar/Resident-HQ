@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserPlus, Package, Briefcase, Users, Megaphone, Loader2, KeyRound } from "lucide-react";
+import { UserPlus, Package, Briefcase, Users, Megaphone, Loader2, KeyRound, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { useGuard } from "@/context/GuardContext";
 import { verifyEntryCode } from "@/lib/api/api";
@@ -10,11 +10,14 @@ import { EntryRequestModal } from "./EntryRequestModal";
 import { ApprovalScreen } from "./ApprovalScreen";
 import { NewAnnouncementModal } from "./NewAnnouncementModal";
 import { NoticeCard } from "@/components/cards/NoticeCard";
+import { EmergencyAlertModal } from "./EmergencyAlertModal";
+import { MovingPassModal } from "./MovingPassModal";
 
 export function GuardLayout() {
   const { entries, tickets, announcements, removeAnnouncement, loading, fetchEntries, setModalOpen } = useGuard();
   const [entryCode, setEntryCode] = useState("");
   const [verifying, setVerifying] = useState(false);
+  const [movingPassOpen, setMovingPassOpen] = useState(false);
 
   useEffect(() => {
     fetchEntries();
@@ -64,6 +67,12 @@ export function GuardLayout() {
       icon: Megaphone,
       tint: "from-purple-500 to-fuchsia-600",
       onClick: () => setModalOpen(true, "Announcement"),
+    },
+    {
+      label: "Moving Pass",
+      icon: Truck,
+      tint: "from-violet-500 to-purple-600",
+      onClick: () => setMovingPassOpen(true),
     },
   ];
 
@@ -243,6 +252,8 @@ export function GuardLayout() {
         <AnimatePresence>
           <ApprovalScreen />
         </AnimatePresence>
+        <EmergencyAlertModal />
+        <MovingPassModal open={movingPassOpen} onClose={() => setMovingPassOpen(false)} />
       </div>
     </div>
   );

@@ -47,11 +47,16 @@ export const serverCreateAccount = createServerFn({ method: "POST" })
     const admin = getSupabaseAdmin();
     await verifyServerAuth(admin, data.accessToken, ["manager", "admin"]);
 
-    // 1. Create user in Supabase Auth via invite
-    const { data: authData, error: authError } = await admin.auth.admin.inviteUserByEmail(
-      data.email,
-      { data: { name: data.name, role: data.role } }
-    );
+    // Generate random password
+    const password = generateRandomPassword();
+
+    // 1. Create user in Supabase Auth via createUser
+    const { data: authData, error: authError } = await admin.auth.admin.createUser({
+      email: data.email,
+      password,
+      email_confirm: true,
+      user_metadata: { name: data.name, role: data.role }
+    });
 
     if (authError) throw new Error(authError.message);
     if (!authData.user) throw new Error("Failed to create user account");
@@ -88,7 +93,7 @@ export const serverCreateAccount = createServerFn({ method: "POST" })
       societyId: data.societyId,
     });
 
-    return { id: authData.user.id, email: data.email };
+    return { id: authData.user.id, email: data.email, tempPassword: password };
   });
 
 // ─── Public Society Onboarding (Bypasses RLS for registration) ───
@@ -100,27 +105,11 @@ export const serverPublicOnboardSociety = createServerFn({ method: "POST" })
       totalFlats: z.number(),
       adminEmail: z.string().email(),
       subscriptionPlan: z.string(),
-      paymentDetails: z.object({
-        orderId: z.string(),
-        paymentId: z.string(),
-        signature: z.string(),
-      }),
     })
   )
   .handler(async ({ data }) => {
     const { getSupabaseAdmin } = await import("@/lib/supabase-admin.server");
     const admin = getSupabaseAdmin();
-
-    const crypto = await import("crypto");
-    const key_secret = process.env.RAZORPAY_KEY_SECRET;
-    if (!key_secret || key_secret === "placeholder_secret") {
-      throw new Error("Razorpay API secret is missing or invalid");
-    }
-    const body = data.paymentDetails.orderId + "|" + data.paymentDetails.paymentId;
-    const expectedSignature = crypto.createHmac("sha256", key_secret).update(body).digest("hex");
-    if (expectedSignature !== data.paymentDetails.signature) {
-      throw new Error("Invalid payment signature");
-    }
 
     let baseSlug = data.name
       .toLowerCase()
@@ -181,6 +170,79 @@ export const serverPublicOnboardSociety = createServerFn({ method: "POST" })
       societyId: societyData.id, 
       email: data.adminEmail 
     };
+  });
+
+// ─── Super Admin Society Onboarding (Bypasses RLS) ───
+export const serverAdminOnboardSociety = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      accessToken: z.string(),
+      name: z.string(),
+      address: z.string(),
+      totalFlats: z.number(),
+      adminEmail: z.string().email(),
+      subscriptionPlan: z.string(),
+    })
+  )
+  .handler(async ({ data }) => {
+    const { getSupabaseAdmin } = await import("@/lib/supabase-admin.server");
+    const admin = getSupabaseAdmin();
+    await verifyServerAuth(admin, data.accessToken, ["admin"]);
+
+    let baseSlug = data.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+    
+    let slug = baseSlug;
+    let isUnique = false;
+    let counter = 1;
+
+    // 1. Check if slug exists, append number if it does
+    while (!isUnique) {
+      const { data: existing } = await admin.from("societies").select("id").eq("slug", slug).single();
+      if (existing) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      } else {
+        isUnique = true;
+      }
+    }
+
+    // 2. Insert Society
+    const { data: societyData, error: socError } = await admin
+      .from("societies")
+      .insert({
+        name: data.name,
+        slug,
+        address: data.address,
+        max_flats: data.totalFlats,
+        plan: data.subscriptionPlan.toLowerCase(),
+        status: "active",
+      })
+      .select()
+      .single();
+
+    if (socError || !societyData) throw new Error(socError?.message || "Failed to create society");
+
+    // 3. Create Manager Account via Invite (No password leak)
+    const { data: authData, error: authError } = await admin.auth.admin.inviteUserByEmail(
+      data.adminEmail,
+      { data: { name: "Manager - " + data.name, role: "manager" } }
+    );
+
+    if (authError) throw new Error(authError.message);
+
+    await admin.from("users").insert({
+      id: authData.user!.id,
+      society_id: societyData.id,
+      role: "manager",
+      name: "Manager - " + data.name,
+      email: data.adminEmail,
+    });
+
+    return societyData;
   });
 
 // ─── Delete Society (Bypasses RLS to allow cascading delete) ───

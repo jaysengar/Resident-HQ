@@ -25,25 +25,29 @@ import { HelpdeskTickets } from "./HelpdeskTickets";
 import { GuardsTable } from "./GuardsTable";
 import { ManagerSettings } from "./ManagerSettings";
 import { ManagerBranding } from "./ManagerBranding";
+import { NocRequestsList } from "./NocRequestsList";
 import { isFeatureAvailable, normalizePlan, FEATURE_REGISTRY, type PlanId, type FeatureId, type FeatureMeta } from "@/lib/planGating";
 import { UpgradePlanModal } from "@/components/modals/UpgradePlanModal";
 import { SubscriptionLockModal } from "@/components/modals/SubscriptionLockModal";
+import { NotificationPanel } from "@/components/notifications/NotificationPanel";
+import { Truck } from "lucide-react";
 
 interface NavItem {
   id: ManagerTab;
   label: string;
-  icon: typeof LayoutDashboard;
+  icon: any;
   featureId?: FeatureId;
 }
 
 const NAV_ITEMS: NavItem[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, featureId: "dashboard" },
   { id: "residents", label: "Flats & Residents", icon: Building2, featureId: "residents" },
+  { id: "nocs", label: "Moving NOCs", icon: Truck },
   { id: "guards", label: "Security Guards", icon: User, featureId: "guards" },
   { id: "dues", label: "Dues Collection", icon: Wallet, featureId: "dues" },
   { id: "helpdesk", label: "Helpdesk Tickets", icon: LifeBuoy, featureId: "helpdesk" },
   { id: "branding", label: "Branding", icon: Palette, featureId: "branding" },
-  { id: "settings", label: "Settings", icon: Settings as any, featureId: "settings" },
+  { id: "settings", label: "Settings", icon: Settings, featureId: "settings" },
 ];
 
 export function ManagerLayout() {
@@ -53,6 +57,8 @@ export function ManagerLayout() {
   const [societyId, setSocietyId] = useState<string>("");
   const [expiryDate, setExpiryDate] = useState<Date | null>(null);
   const [upgradeModal, setUpgradeModal] = useState<{ open: boolean; feature: FeatureMeta | null }>({ open: false, feature: null });
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     import("@/lib/api/api").then(({ getSocietyPlan }) => {
@@ -183,9 +189,17 @@ export function ManagerLayout() {
             />
           </div>
           <div className="flex items-center gap-6">
-            <button className="relative grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/40 text-zinc-400 hover:text-white hover:bg-white/5 transition-all">
+            <button 
+              onClick={() => setNotifOpen(true)}
+              className="relative grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/40 text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+            >
               <Bell size={18} />
-              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+                </span>
+              )}
             </button>
             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/40 p-1.5 pr-4 shadow-lg cursor-pointer hover:bg-white/5 transition-colors">
               <div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-white text-[11px] font-bold shadow-inner">
@@ -212,6 +226,7 @@ export function ManagerLayout() {
             >
               {tab === "dashboard" && <ManagerDashboard />}
               {tab === "residents" && <ResidentsTable />}
+              {tab === "nocs" && <NocRequestsList />}
               {tab === "guards" && <GuardsTable />}
               {tab === "dues" && <DuesCollection />}
               {tab === "helpdesk" && <HelpdeskTickets />}
@@ -241,6 +256,12 @@ export function ManagerLayout() {
           }}
         />
       )}
+
+      <NotificationPanel
+        open={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        onUnreadCountChange={setUnreadCount}
+      />
     </div>
   );
 }

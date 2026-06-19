@@ -86,6 +86,12 @@ export function PaymentModal({ open, onClose, bill }: { open: boolean; onClose: 
         theme: {
           color: "#0f172a", // Primary brand color
         },
+        modal: {
+          ondismiss: () => {
+            setProcessing(false);
+            toast.error("Payment cancelled");
+          }
+        }
       };
 
       const paymentObject = new (window as any).Razorpay(options);

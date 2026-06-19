@@ -23,6 +23,7 @@ import { NewTicketModal } from "@/components/modals/NewTicketModal";
 import { DocumentUploadModal } from "@/components/modals/DocumentUploadModal";
 import { ServiceProviderModal } from "@/components/modals/ServiceProviderModal";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 
 export function ServicesView() {
   const { currentUser, activeTickets, documents, fetchInitialData } = useApp();
@@ -32,10 +33,14 @@ export function ServicesView() {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState<any[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   useEffect(() => {
     import("@/lib/api/api").then(({ getServiceCategories }) => {
-      getServiceCategories().then((data) => setCategories(data));
+      getServiceCategories().then((data) => {
+        setCategories(data);
+        setCategoriesLoading(false);
+      }).catch(() => setCategoriesLoading(false));
     });
   }, []);
 
@@ -115,28 +120,36 @@ export function ServicesView() {
           >
             <SectionTitle title="Categories" />
             <div className="mt-3 grid grid-cols-3 gap-3">
-              {list.map((c) => (
-                <motion.button
-                  key={c.label}
-                  whileTap={{ scale: 0.95 }}
-                  whileHover={{ y: -2 }}
-                  onClick={() => {
-                    if (seg === "helpdesk") setTicketOpen(true);
-                    else setDirOpen(c.label);
-                  }}
-                  className="flex flex-col items-center gap-2 rounded-2xl border border-border/60 bg-card p-3"
-                  style={{ boxShadow: "var(--shadow-soft)" }}
-                >
-                  <div className={`grid h-12 w-12 place-items-center rounded-xl ${c.color}`}>
-                    <c.icon size={22} />
+              {categoriesLoading ? (
+                [1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="flex flex-col items-center gap-2 rounded-2xl border border-border/60 bg-card p-3">
+                    <div className="h-12 w-12 rounded-xl bg-secondary animate-pulse" style={{ animationDelay: `${i * 0.08}s` }} />
+                    <div className="h-3 w-14 rounded-full bg-secondary animate-pulse" />
                   </div>
-                  <span className="text-xs font-medium text-foreground">{c.label}</span>
-                </motion.button>
-              ))}
-              {list.length === 0 && (
+                ))
+              ) : list.length === 0 ? (
                 <div className="col-span-3 text-center text-xs text-muted-foreground py-4">
                   No services found matching "{search}"
                 </div>
+              ) : (
+                list.map((c) => (
+                  <motion.button
+                    key={c.label}
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ y: -2 }}
+                    onClick={() => {
+                      if (seg === "helpdesk") setTicketOpen(true);
+                      else setDirOpen(c.label);
+                    }}
+                    className="flex flex-col items-center gap-2 rounded-2xl border border-border/60 bg-card p-3"
+                    style={{ boxShadow: "var(--shadow-soft)" }}
+                  >
+                    <div className={`grid h-12 w-12 place-items-center rounded-xl ${c.color}`}>
+                      <c.icon size={22} />
+                    </div>
+                    <span className="text-xs font-medium text-foreground">{c.label}</span>
+                  </motion.button>
+                ))
               )}
             </div>
           </motion.section>

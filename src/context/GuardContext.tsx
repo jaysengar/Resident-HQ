@@ -7,6 +7,7 @@ import { useSocietyTheme } from "@/hooks/useSocietyTheme";
 interface GuardState {
   entries: ActiveEntry[];
   tickets: any[];
+  nocRequests: any[];
   loading: boolean;
   modalOpen: boolean;
   modalType: "Visitor" | "Delivery" | "Staff" | "Announcement" | null;
@@ -18,6 +19,8 @@ interface GuardState {
   resetApproval: () => void;
   announcements: any[];
   removeAnnouncement: (id: string) => Promise<void>;
+  activeEmergency: any | null;
+  resolveEmergency: (id: string) => Promise<void>;
 }
 
 const GuardContext = createContext<GuardState | null>(null);
@@ -34,6 +37,7 @@ export function GuardProvider({
 
   const [entries, setEntries] = useState<ActiveEntry[]>([]);
   const [tickets, setTickets] = useState<any[]>([]); // Using any for mock, we should define type properly
+  const [nocRequests, setNocRequests] = useState<any[]>([]);
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpenState] = useState(false);
@@ -41,16 +45,19 @@ export function GuardProvider({
     "Visitor" | "Delivery" | "Staff" | "Announcement" | null
   >(null);
   const [approvalStatus, setApprovalStatus] = useState<ApprovalStatus | null>(null);
+  const [activeEmergency, setActiveEmergency] = useState<any | null>(null);
 
   const fetchEntries = useCallback(async () => {
     setLoading(true);
     try {
-      const [data, ticketsData, annsData] = await Promise.all([
+      const [data, ticketsData, annsData, nocData] = await Promise.all([
         import("@/lib/api/api").then((m) => m.getActiveEntries()),
         import("@/lib/api/api").then((m) => m.getHelpdeskTickets()),
         import("@/lib/api/api").then((m) => m.getAnnouncements()),
+        import("@/lib/api/api").then((m) => m.getNocRequests()),
       ]);
       setEntries(data.filter((e) => e.status === "approved"));
+      setNocRequests(nocData);
       // For guards, we show open or in progress tickets
       setTickets(ticketsData.filter((t) => t.status !== "Resolved"));
       setAnnouncements(annsData);
@@ -92,6 +99,23 @@ export function GuardProvider({
           'postgres_changes',
           { event: '*', schema: 'public', table: 'announcements' },
           () => fetchEntries() // re-fetch when announcements change
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'noc_requests' },
+          () => fetchEntries() // re-fetch when NOC changes
+        )
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'emergencies', filter: `status=eq.active` },
+          (payload) => {
+            setActiveEmergency(payload.new);
+            // Optional: try to play a sound if the browser allows
+            try {
+              const audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+              audio.play().catch(console.error);
+            } catch(e) {}
+          }
         )
         .subscribe();
     });
@@ -151,11 +175,23 @@ export function GuardProvider({
     }
   }, []);
 
+  const resolveEmergency = useCallback(async (id: string) => {
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      await supabase.from("emergencies").update({ status: "resolved", resolved_at: new Date().toISOString() }).eq("id", id);
+      setActiveEmergency(null);
+      toast.success("Emergency resolved");
+    } catch {
+      toast.error("Failed to resolve emergency");
+    }
+  }, []);
+
   return (
     <GuardContext.Provider
       value={{
         entries,
         tickets,
+        nocRequests,
         loading,
         modalOpen,
         modalType,
@@ -167,6 +203,8 @@ export function GuardProvider({
         resetApproval,
         announcements,
         removeAnnouncement,
+        activeEmergency,
+        resolveEmergency,
       }}
     >
       {children}

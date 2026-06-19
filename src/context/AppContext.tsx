@@ -50,6 +50,7 @@ type AppState = {
   submitVote: (optionIndex: number) => Promise<void>;
   documents: SocietyDocument[];
   fetchInitialData: () => void;
+  dataReady: boolean;
 };
 
 const AppContext = createContext<AppState | null>(null);
@@ -71,6 +72,7 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
     role: "resident" as string,
     email: "",
     phone: "",
+    society_id: "",
   });
 
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -82,6 +84,7 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
   const [bills, setBills] = useState<Bill[]>([]);
   const [activePoll, setActivePoll] = useState<Poll | null>(null);
   const [documents, setDocuments] = useState<SocietyDocument[]>([]);
+  const [dataReady, setDataReady] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -92,6 +95,7 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
         role: user.role || "resident",
         email: user.email || "",
         phone: user.phone || "",
+        society_id: user.societyId || "",
       }));
       refreshAll();
     }
@@ -121,6 +125,7 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
         societyName: profile.society_name || "Resident HQ Society",
         flatType: profile.flat_type || "3 BHK",
         occupancyType: profile.occupancy_type || "Owner",
+        society_id: profile.society_id || u.society_id || "",
       }));
       setTransactions(txns.map(t => ({
         id: t.id,
@@ -142,6 +147,8 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setDataReady(true);
     }
   };
 
@@ -316,9 +323,19 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
     bills,
     refreshBills: async () => {
       try {
-        const bs = await getResidentBills();
+        const [bs, txns] = await Promise.all([
+          getResidentBills(),
+          getTransactions(),
+        ]);
         setBills(bs);
         setCurrentUser(u => ({ ...u, balance: bs.filter(b => b.status !== "paid").reduce((acc, curr) => acc + Number(curr.amount), 0) }));
+        setTransactions(txns.map(t => ({
+          id: t.id,
+          title: `${t.month} Maintenance`,
+          date: new Date(t.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+          method: t.method,
+          amount: Number(t.amount).toLocaleString("en-IN")
+        })));
       } catch (e) {
         console.error(e);
       }
@@ -349,6 +366,7 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
       }
     },
     fetchInitialData: refreshAll,
+    dataReady,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

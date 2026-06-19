@@ -640,6 +640,7 @@ export async function getResidentProfile() {
     ...(flatData || { flat_type: "3 BHK", occupancy_type: "Owner" }),
     dues_amount,
     dues_status,
+    society_id: userCtx.society_id,
     society_name: societyData?.name || "My Society",
   };
 }
@@ -663,28 +664,21 @@ export async function payDues(amount: number, method: string) {
 
 export async function payBill(billId: string, amount: number, method: string) {
   const { supabase } = await import("@/lib/supabase");
+  const { serverPayBill } = await import("@/lib/api/payment.functions");
   const userCtx = await getCurrentUserContext();
   
-  const month = new Date().toLocaleDateString("en-IN", { month: "short", year: "numeric" });
-  
-  // 1. Insert payment record
-  const { error: insertErr } = await supabase.from("payments").insert({
-    society_id: userCtx.society_id,
-    flat_number: userCtx.flat_no,
-    amount,
-    method,
-    month
-  });
-  if (insertErr) throw insertErr;
+  const accessToken = (await supabase.auth.getSession()).data.session?.access_token || "";
 
-  // 2. Update bills table to set status to paid
-  const { error: updateErr } = await supabase
-    .from("bills")
-    .update({ status: "paid" })
-    .eq("id", billId)
-    .eq("society_id", userCtx.society_id)
-    .eq("flat_number", userCtx.flat_no);
-  if (updateErr) throw updateErr;
+  await serverPayBill({
+    data: {
+      accessToken,
+      societyId: userCtx.society_id,
+      flatNumber: userCtx.flat_no!,
+      billId,
+      amount,
+      method,
+    }
+  });
 }
 
 export async function getResidentBills(): Promise<import("@/lib/types").Bill[]> {
@@ -757,7 +751,7 @@ export async function addResident(payload: {
   aadhaarNumber: string;
   flatType: string;
   occupancyType: string;
-}): Promise<{ success: boolean; message: string }> {
+}): Promise<{ success: boolean; message: string; tempPassword?: string }> {
   // Input validation
   payload.name = sanitize(payload.name);
   payload.email = payload.email.trim().toLowerCase();
@@ -822,7 +816,7 @@ export async function addResident(payload: {
     },
   });
 
-  return { success: true, message: `Resident ${payload.name} added successfully.`,  };
+  return { success: true, message: `Resident ${payload.name} added successfully.`, tempPassword: user.tempPassword };
 }
 
 export async function addGuard(payload: { name: string; email: string; phone: string }): Promise<{ success: boolean; message: string; tempPassword?: string }> {
@@ -840,7 +834,7 @@ export async function addGuard(payload: { name: string; email: string; phone: st
     },
   });
 
-  return { success: true, message: "Guard added successfully",  };
+  return { success: true, message: "Guard added successfully", tempPassword: user.tempPassword };
 }
 
 export async function getGuards(): Promise<{ id: string; name: string; phone: string; email: string }[]> {
@@ -901,6 +895,41 @@ export async function deleteGuard(userId: string): Promise<{ success: boolean }>
   await serverDeleteUser({ data: {
       accessToken: (await (await import("@/lib/supabase")).supabase.auth.getSession()).data.session?.access_token || "", userId } });
   return { success: true };
+}
+
+export async function triggerEmergency(): Promise<{ success: boolean; emergencyId: string }> {
+  const { supabase } = await import("@/lib/supabase");
+  const userCtx = await getCurrentUserContext();
+
+  const { data, error } = await supabase
+    .from("emergencies")
+    .insert({
+      society_id: userCtx.society_id,
+      flat_number: userCtx.flat_no || userCtx.flat,
+      user_id: userCtx.id,
+      status: "active",
+    })
+    .select("id")
+    .single();
+
+  if (error) throw new Error(error.message);
+  return { success: true, emergencyId: data.id };
+}
+
+export async function getVisitorLog(): Promise<any[]> {
+  const { supabase } = await import("@/lib/supabase");
+  const userCtx = await getCurrentUserContext();
+  
+  const { data, error } = await supabase
+    .from("notifications")
+    .select("*")
+    .eq("society_id", userCtx.society_id)
+    .or(`flat_number.eq.${userCtx.flat_no},flat_number.is.null`)
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (error) throw new Error(error.message);
+  return data || [];
 }
 
 export async function getNotifications(): Promise<any[]> {
@@ -1094,41 +1123,15 @@ export async function onboardSociety(payload: {
   adminEmail: string;
   subscriptionPlan: string;
 }): Promise<Society> {
+  const { serverAdminOnboardSociety } = await import("@/lib/api/admin.functions");
   const { supabase } = await import("@/lib/supabase");
-  const { serverCreateAccount } = await import("@/lib/api/admin.functions");
 
-  // Create slug from name
-  const slug = payload.name
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "-")
-    .replace(/-+/g, "-");
+  const accessToken = (await supabase.auth.getSession()).data.session?.access_token || "";
 
-  // 1. Insert Society
-  const { data: societyData, error: socError } = await supabase
-    .from("societies")
-    .insert({
-      name: payload.name,
-      slug,
-      address: payload.address,
-      max_flats: payload.totalFlats,
-      plan: payload.subscriptionPlan.toLowerCase(),
-      status: "active",
-    })
-    .select()
-    .single();
-
-  if (socError || !societyData) {
-    throw new Error(socError?.message || "Failed to create society");
-  }
-
-  // 2. Create Manager Account via server function (random password generated)
-  await serverCreateAccount({
+  const societyData = await serverAdminOnboardSociety({
     data: {
-      accessToken: (await (await import("@/lib/supabase")).supabase.auth.getSession()).data.session?.access_token || "",
-      email: payload.adminEmail,
-      role: "manager",
-      name: "Manager - " + payload.name,
-      societyId: societyData.id,
+      ...payload,
+      accessToken,
     },
   });
 
@@ -1255,4 +1258,101 @@ export async function getServiceCategories(): Promise<any[]> {
     .select("*");
   if (error) throw new Error(error.message);
   return data || [];
+}
+
+export async function submitNocRequest(type: "Move-In" | "Move-Out", moving_date: string, reason: string): Promise<{ success: boolean; id?: string }> {
+  const { supabase } = await import("@/lib/supabase");
+  const userCtx = await getCurrentUserContext();
+
+  const { data, error } = await supabase
+    .from("noc_requests")
+    .insert({
+      society_id: userCtx.society_id,
+      user_id: userCtx.id,
+      flat_number: userCtx.flat_no || userCtx.flat,
+      type,
+      moving_date,
+      reason,
+      status: "Pending"
+    })
+    .select("id")
+    .single();
+
+  if (error) throw new Error(error.message);
+  return { success: true, id: data.id };
+}
+
+export async function getNocRequests(): Promise<any[]> {
+  const { supabase } = await import("@/lib/supabase");
+  const userCtx = await getCurrentUserContext();
+
+  let query = supabase
+    .from("noc_requests")
+    .select(`
+      *,
+      users!noc_requests_user_id_fkey(name, phone)
+    `)
+    .eq("society_id", userCtx.society_id)
+    .order("created_at", { ascending: false });
+
+  // Residents only see their own
+  if (userCtx.role === "resident") {
+    query = query.eq("user_id", userCtx.id);
+  }
+
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
+
+  return data.map((n: any) => ({
+    ...n,
+    user_name: n.users?.name,
+    user_phone: n.users?.phone,
+  }));
+}
+
+export async function updateNocStatus(id: string, status: "Approved" | "Rejected", admin_notes?: string): Promise<{ success: boolean }> {
+  const { supabase } = await import("@/lib/supabase");
+  
+  const { error } = await supabase
+    .from("noc_requests")
+    .update({ 
+      status, 
+      admin_notes,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+// ─── Notifications ───
+
+
+
+export async function markNotificationRead(notificationId: string) {
+  const { supabase } = await import("@/lib/supabase");
+
+  const { error } = await supabase
+    .from("notifications")
+    .update({ is_read: true })
+    .eq("id", notificationId);
+
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+export async function markAllNotificationsRead() {
+  const { supabase } = await import("@/lib/supabase");
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from("notifications")
+    .update({ is_read: true })
+    .eq("user_id", user.id)
+    .eq("is_read", false);
+
+  if (error) throw new Error(error.message);
+  return { success: true };
 }

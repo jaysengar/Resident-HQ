@@ -17,7 +17,7 @@ import {
 import { toast } from "sonner";
 import { useSocietyTheme } from "@/hooks/useSocietyTheme";
 
-export type ManagerTab = "dashboard" | "residents" | "guards" | "dues" | "helpdesk" | "settings" | "branding";
+export type ManagerTab = "dashboard" | "residents" | "guards" | "dues" | "helpdesk" | "nocs" | "settings" | "branding";
 
 interface ManagerState {
   tab: ManagerTab;
@@ -26,14 +26,17 @@ interface ManagerState {
   monthlyData: MonthlyCollection[];
   residents: Resident[];
   tickets: HelpdeskTicket[];
+  nocRequests: any[];
   guards: { id: string; name: string; phone: string; email: string }[];
   loading: boolean;
   fetchDashboard: () => Promise<void>;
   fetchResidents: () => Promise<void>;
   fetchTickets: () => Promise<void>;
+  fetchNocRequests: () => Promise<void>;
   fetchGuards: () => Promise<void>;
   handleSendReminder: (flatNo: string) => Promise<void>;
   handleResolveTicket: (ticketId: string, newStatus: TicketStatus) => Promise<void>;
+  handleUpdateNocStatus: (id: string, status: "Approved" | "Rejected", notes?: string) => Promise<void>;
   handleAddResident: (payload: { 
     name: string; 
     email: string; 
@@ -67,6 +70,7 @@ export function ManagerProvider({
   const [monthlyData, setMonthlyData] = useState<MonthlyCollection[]>([]);
   const [residents, setResidents] = useState<Resident[]>([]);
   const [tickets, setTickets] = useState<HelpdeskTicket[]>([]);
+  const [nocRequests, setNocRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Real-time subscriptions for live data
@@ -84,6 +88,11 @@ export function ManagerProvider({
           'postgres_changes',
           { event: '*', schema: 'public', table: 'helpdesk_tickets' },
           () => fetchTickets()
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'noc_requests' },
+          () => fetchNocRequests()
         )
         .on(
           'postgres_changes',
@@ -142,6 +151,19 @@ export function ManagerProvider({
     }
   }, []);
 
+  const fetchNocRequests = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { getNocRequests } = await import("@/lib/api/api");
+      const data = await getNocRequests();
+      setNocRequests(data);
+    } catch {
+      toast.error("Failed to load NOC requests");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const handleSendReminder = useCallback(async (flatNo: string) => {
     try {
       const result = await sendReminder(flatNo);
@@ -168,6 +190,17 @@ export function ManagerProvider({
       setTickets(data);
     }
   }, []);
+
+  const handleUpdateNocStatus = useCallback(async (id: string, status: "Approved" | "Rejected", notes?: string) => {
+    try {
+      const { updateNocStatus } = await import("@/lib/api/api");
+      await updateNocStatus(id, status, notes);
+      toast.success(`NOC ${status}`);
+      fetchNocRequests();
+    } catch {
+      toast.error("Failed to update NOC status");
+    }
+  }, [fetchNocRequests]);
 
   const handleAddResident = useCallback(async (payload: { 
     name: string; 
@@ -271,14 +304,17 @@ export function ManagerProvider({
         monthlyData,
         residents,
         tickets,
+        nocRequests,
         guards,
         loading,
         fetchDashboard,
         fetchResidents,
         fetchTickets,
+        fetchNocRequests,
         fetchGuards,
         handleSendReminder,
         handleResolveTicket,
+        handleUpdateNocStatus,
         handleAddResident,
         handleAddGuard,
         handleDeleteResident,

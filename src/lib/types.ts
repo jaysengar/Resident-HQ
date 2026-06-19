@@ -183,3 +183,18 @@ export interface PollVote {
   flat_number: string;
   option_index: number;
 }
+
+export interface NocRequest {
+  id: string;
+  society_id: string;
+  user_id: string;
+  flat_number: string;
+  type: "Move-In" | "Move-Out";
+  moving_date: string;
+  reason?: string;
+  status: "Pending" | "Approved" | "Rejected";
+  admin_notes?: string;
+  created_at: string;
+  updated_at: string;
+  user_name?: string; // Optional, useful when joined with users table
+}

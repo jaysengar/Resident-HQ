@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonRow } from "@/components/ui/SkeletonCard";
 
 export function DuesView() {
-  const { transactions, bills } = useApp();
+  const { transactions, bills, dataReady } = useApp();
   const [payOpen, setPayOpen] = useState(false);
   const [selectedBill, setSelectedBill] = useState<any>(null);
   const currentMonth = new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" });
@@ -26,7 +26,13 @@ export function DuesView() {
       <section className="mt-7">
         <SectionTitle title="Pending Bills" />
         <div className="mt-3 space-y-2.5">
-          {pendingBills.length === 0 ? (
+          {!dataReady ? (
+            <>
+              <SkeletonRow />
+              <SkeletonRow />
+              <SkeletonRow />
+            </>
+          ) : pendingBills.length === 0 ? (
             <EmptyState
               icon={Receipt}
               title="No pending bills"
@@ -73,7 +79,12 @@ export function DuesView() {
       <section className="mt-7">
         <SectionTitle title="Transaction History" />
         <div className="mt-3 space-y-2.5">
-          {transactions.length === 0 ? (
+          {!dataReady ? (
+            <>
+              <SkeletonRow />
+              <SkeletonRow />
+            </>
+          ) : transactions.length === 0 ? (
             <EmptyState
               icon={Receipt}
               title="No transactions yet"

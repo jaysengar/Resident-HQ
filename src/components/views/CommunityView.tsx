@@ -6,9 +6,10 @@ import { TopHeader } from "@/components/layout/TopHeader";
 import { FeedPostCard } from "@/components/cards/FeedPostCard";
 import { NewPostModal } from "@/components/modals/NewPostModal";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 
 export function CommunityView() {
-  const { communityPosts, currentUser } = useApp();
+  const { communityPosts, currentUser, dataReady } = useApp();
   const [open, setOpen] = useState(false);
 
   return (
@@ -37,18 +38,25 @@ export function CommunityView() {
       </button>
 
       <section className="mt-6 space-y-4">
-        <AnimatePresence initial={false}>
-          {communityPosts.map((p) => (
-            <FeedPostCard key={p.id} post={p} />
-          ))}
-        </AnimatePresence>
-        {communityPosts.length === 0 && (
+        {!dataReady ? (
+          <>
+            <SkeletonCard lines={4} />
+            <SkeletonCard lines={3} />
+            <SkeletonCard lines={4} />
+          </>
+        ) : communityPosts.length === 0 ? (
           <EmptyState
             icon={MessageSquare}
             title="No posts yet"
             description="Be the first to share something with your community!"
             action={{ label: "Create Post", onClick: () => setOpen(true) }}
           />
+        ) : (
+          <AnimatePresence initial={false}>
+            {communityPosts.map((p) => (
+              <FeedPostCard key={p.id} post={p} />
+            ))}
+          </AnimatePresence>
         )}
       </section>
 
