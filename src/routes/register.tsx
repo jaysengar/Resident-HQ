@@ -190,8 +190,8 @@ function PublicRegisterPage() {
     setProvisioning(true);
 
     try {
-      const { createRazorpayOrder } = await import("@/lib/api/api");
-      const orderData = await createRazorpayOrder(selectedPlan.price);
+      const { createPublicRazorpayOrder } = await import("@/lib/api/payments");
+      const orderData = await createPublicRazorpayOrder(selectedPlan.price);
 
       const proceedWithOnboarding = async () => {
         let stepInterval = setInterval(() => {
