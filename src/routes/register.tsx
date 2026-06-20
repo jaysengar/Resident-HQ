@@ -190,6 +190,9 @@ function PublicRegisterPage() {
     setProvisioning(true);
 
     try {
+      const { createRazorpayOrder } = await import("@/lib/api/api");
+      const orderData = await createRazorpayOrder(selectedPlan.price);
+
       const proceedWithOnboarding = async () => {
         let stepInterval = setInterval(() => {
           setCurrentStep((prev) => {
@@ -228,7 +231,47 @@ function PublicRegisterPage() {
         }
       };
 
-      await proceedWithOnboarding();
+      const handleSuccess = async (response?: any) => {
+        await proceedWithOnboarding();
+      };
+
+      if (orderData.mocked) {
+        console.warn("⚠️ Mock mode active. Simulating payment without Razorpay popup.");
+        await handleSuccess();
+        return;
+      }
+
+      const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+      if (!res) {
+        throw new Error("Razorpay SDK failed to load");
+      }
+
+      const options = {
+        key: orderData.razorpayKeyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Resident HQ",
+        description: `Onboarding - ${selectedPlan.name} Plan`,
+        order_id: orderData.orderId,
+        handler: handleSuccess,
+        prefill: {
+          name: name,
+          email: adminEmail,
+        },
+        theme: {
+          color: "#8b5cf6",
+        },
+        modal: {
+          ondismiss: () => {
+            setProvisioning(false);
+            toast.error("Payment cancelled");
+          }
+        }
+      };
+
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
+
     } catch (err: any) {
       toast.error(err.message || "Failed to start onboarding");
       setProvisioning(false);
