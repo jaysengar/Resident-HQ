@@ -37,7 +37,6 @@ import {
   Linkedin,
 } from "lucide-react";
 import React, { useRef, useEffect, useState } from "react";
-import { PLAN_DETAILS } from "@/lib/planGating";
 
 export const Route = createFileRoute("/")(  {
   head: () => ({
@@ -63,33 +62,18 @@ function LandingPage() {
   });
 
   return (
-    <div className="min-h-screen text-white flex flex-col relative overflow-hidden bg-[#030303] selection:bg-violet-500/30 font-sans">
+    <div className="min-h-screen text-white flex flex-col relative overflow-hidden selection:bg-violet-500/30 font-sans">
       {/* Scroll Progress */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 origin-left z-[100]"
         style={{ scaleX }}
       />
 
-      {/* Global Background */}
-      <div className="fixed inset-0 pointer-events-none -z-50">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(120,80,255,0.15),transparent)]" />
-        <motion.div
-          animate={{ x: [-20, 20, -20], y: [0, -30, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[5%] left-[5%] w-[400px] h-[400px] md:w-[700px] md:h-[700px] bg-violet-600/20 rounded-full blur-[150px]"
-        />
-        <motion.div
-          animate={{ x: [20, -20, 20], y: [0, 30, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[30%] right-[0%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-fuchsia-600/15 rounded-full blur-[130px]"
-        />
-        <motion.div
-          animate={{ x: [0, 50, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[0%] left-[30%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px]"
-        />
-        {/* Dot grid */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjAuNSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA4KSIvPjwvc3ZnPg==')] opacity-60" />
+      {/* Pure CSS Dynamic Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden bg-slate-950">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/20 rounded-full blur-[128px] pointer-events-none animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-indigo-600/20 rounded-full blur-[128px] pointer-events-none animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-slate-950/40 pointer-events-none z-10" />
       </div>
 
       <Navbar />

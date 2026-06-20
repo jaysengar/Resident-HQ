@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err: any) {
       // Fallback for Super Admin if RLS blocks the fetch
       const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email?.includes("admin")) {
+      if (user?.app_metadata?.role === "admin" || user?.user_metadata?.role === "admin") {
         setUser({
           id: userId,
           name: "Super Admin",

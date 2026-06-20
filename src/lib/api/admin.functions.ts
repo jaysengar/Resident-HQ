@@ -27,6 +27,48 @@ function generateRandomPassword(length = 12): string {
   return password;
 }
 
+// ─── HMAC Signature Helpers for Onboarding ───
+async function signToken(payload: string): Promise<string> {
+  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY || "default_secret";
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(payload));
+  // Convert ArrayBuffer to base64 safely
+  const sigBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
+  return `${btoa(payload)}.${sigBase64}`;
+}
+
+async function verifyToken(token: string): Promise<string | null> {
+  try {
+    const [payloadBase64, sigBase64] = token.split(".");
+    if (!payloadBase64 || !sigBase64) return null;
+    const payload = atob(payloadBase64);
+    
+    const secret = process.env.SUPABASE_SERVICE_ROLE_KEY || "default_secret";
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["verify"]
+    );
+    
+    const signatureBytes = Uint8Array.from(atob(sigBase64), c => c.charCodeAt(0));
+    const isValid = await crypto.subtle.verify("HMAC", key, signatureBytes, encoder.encode(payload));
+    
+    return isValid ? payload : null;
+  } catch (err) {
+    return null;
+  }
+}
+
 // ─── Create User Account (used by addResident & addGuard) ───
 export const serverCreateAccount = createServerFn({ method: "POST" })
   .inputValidator(
@@ -164,11 +206,14 @@ export const serverPublicOnboardSociety = createServerFn({ method: "POST" })
       email: data.adminEmail,
     });
 
+    const brandingToken = await signToken(societyData.id);
+
     return { 
       success: true, 
       slug, 
       societyId: societyData.id, 
-      email: data.adminEmail 
+      email: data.adminEmail,
+      brandingToken
     };
   });
 
@@ -481,26 +526,34 @@ export const serverSendBulkReminders = createServerFn({ method: "POST" })
     const admin = getSupabaseAdmin();
     await verifyServerAuth(admin, data.accessToken, ["manager", "admin"]);
 
-    // Get all unpaid flats
-    const { data: unpaidFlats, error: flatsError } = await admin
-      .from("flats")
-      .select("flat_number, dues_amount")
+    // Get all unpaid bills
+    const { data: unpaidBills, error: billsError } = await admin
+      .from("bills")
+      .select("flat_number, amount")
       .eq("society_id", data.societyId)
-      .neq("dues_status", "paid")
-      .gt("dues_amount", 0);
+      .eq("status", "unpaid");
 
-    if (flatsError) throw new Error(flatsError.message);
-    if (!unpaidFlats || unpaidFlats.length === 0) {
+    if (billsError) throw new Error(billsError.message);
+    if (!unpaidBills || unpaidBills.length === 0) {
       return { success: true, count: 0, message: "No unpaid flats found" };
     }
 
-    // Insert notifications for each unpaid flat
-    const notifications = unpaidFlats.map((flat) => ({
+    // Aggregate dues per flat
+    const duesPerFlat: Record<string, number> = {};
+    unpaidBills.forEach(bill => {
+      if (!duesPerFlat[bill.flat_number]) duesPerFlat[bill.flat_number] = 0;
+      duesPerFlat[bill.flat_number] += Number(bill.amount);
+    });
+
+    const targetFlats = Object.keys(duesPerFlat);
+
+    // Insert notifications for each flat with unpaid dues
+    const notifications = targetFlats.map((flatNo) => ({
       society_id: data.societyId,
-      flat_number: flat.flat_number,
+      flat_number: flatNo,
       type: "payment_reminder" as const,
       title: "Payment Reminder",
-      body: `Your maintenance dues of ₹${Number(flat.dues_amount).toLocaleString("en-IN")} are pending. Please pay at your earliest convenience.`,
+      body: `Your maintenance dues of ₹${duesPerFlat[flatNo].toLocaleString("en-IN")} are pending. Please pay at your earliest convenience.`,
     }));
 
     const { error: notifError } = await admin.from("notifications").insert(notifications);
@@ -508,12 +561,12 @@ export const serverSendBulkReminders = createServerFn({ method: "POST" })
 
     await internalLogEvent(admin, {
       severity: "info",
-      message: `Sent bulk payment reminders to ${unpaidFlats.length} unpaid flats`,
+      message: `Sent bulk payment reminders to ${targetFlats.length} unpaid flats`,
       source: "billing-service",
       societyId: data.societyId,
     });
 
-    return { success: true, count: unpaidFlats.length, message: `Reminders sent to ${unpaidFlats.length} flats` };
+    return { success: true, count: targetFlats.length, message: `Reminders sent to ${targetFlats.length} flats` };
   });
 
 // ─── Get All Payments (admin revenue view — cross-society) ───
@@ -648,11 +701,11 @@ export const serverGetSystemLogs = createServerFn({ method: "POST" }).inputValid
   }
 );
 
-// ─── Save branding during onboarding (no auth needed, uses admin) ───
+// ─── Save branding during onboarding (secured via HMAC token) ───
 export const serverSaveBranding = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
-      societyId: z.string().uuid(),
+      brandingToken: z.string(),
       logo_url: z.string().optional(),
       banner_url: z.string().optional(),
       tagline: z.string().optional(),
@@ -667,7 +720,10 @@ export const serverSaveBranding = createServerFn({ method: "POST" })
     const { getSupabaseAdmin } = await import("@/lib/supabase-admin.server");
     const admin = getSupabaseAdmin();
 
-    const { societyId, ...brandingData } = data;
+    const { brandingToken, ...brandingData } = data;
+    
+    const societyId = await verifyToken(brandingToken);
+    if (!societyId) throw new Error("Invalid or expired branding token. Unauthorized.");
 
     const { error } = await admin
       .from("society_settings")

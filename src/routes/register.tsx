@@ -164,6 +164,7 @@ function PublicRegisterPage() {
   const [currentStep, setCurrentStep] = useState(-1);
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [brandingToken, setBrandingToken] = useState<string>("");
 
   // Branding state (Pro/Enterprise only)
   const [brandingLogo, setBrandingLogo] = useState("");
@@ -213,6 +214,9 @@ function PublicRegisterPage() {
         clearInterval(stepInterval);
         setCurrentStep(PROVISIONING_STEPS.length);
         setResult(res);
+        if (res.brandingToken) {
+          setBrandingToken(res.brandingToken);
+        }
 
         if (selectedPlan.id === "Pro" || selectedPlan.id === "Enterprise") {
           setDone(false);
@@ -738,7 +742,7 @@ function PublicRegisterPage() {
                        try {
                          await serverSaveBranding({
                            data: {
-                             societyId: result.societyId, // assuming result returns societyId
+                             brandingToken: brandingToken,
                              tagline: brandingTagline,
                              primary_color: brandingPrimaryColor,
                              secondary_color: brandingSecondaryColor,
