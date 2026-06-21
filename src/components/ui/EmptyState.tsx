@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Inbox } from "@phosphor-icons/react";
+import { Tray } from "@phosphor-icons/react";
 
 interface EmptyStateProps {
   icon?: any;
@@ -13,7 +13,7 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  icon: Icon = Inbox,
+  icon: Icon = Tray,
   title,
   description,
   action,
