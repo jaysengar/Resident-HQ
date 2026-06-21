@@ -14,47 +14,59 @@ if (!admin.apps.length) {
   }
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
   const authHeader = req.headers.get('Authorization')!
   const supabaseClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     { global: { headers: { Authorization: authHeader } } }
   )
 
-  const payload = await req.json()
-  const { type, record } = payload
-
-  console.log(`Processing notification for table: ${record.table}`)
-
   try {
-    let targetUserId = null;
-    let title = 'Resident HQ Alert';
-    let body = 'You have a new notification.';
+    const payload = await req.json()
+    const { title, body, userIds, societyId, flatNumber } = payload
 
-    // Logic to map database events to notification content
-    if (record.table === 'visitors') {
-      targetUserId = record.host_id; // The resident to notify
-      title = 'Visitor Alert';
-      body = `${record.name} is at the gate. Please approve or deny.`;
-    } else if (record.table === 'notices') {
-      title = 'New Notice';
-      body = record.title;
+    console.log(`Processing notification: ${title}`)
+
+    let targetUserIds: string[] = [];
+
+    if (userIds && userIds.length > 0) {
+      targetUserIds = userIds;
+    } else if (societyId) {
+      // Find users by societyId
+      let query = supabaseClient.from('users').select('id').eq('society_id', societyId);
+      if (flatNumber) {
+        query = query.eq('flat_no', flatNumber);
+      }
+      const { data: users, error: usersErr } = await query;
+      if (!usersErr && users) {
+        targetUserIds = users.map(u => u.id);
+      }
     }
 
-    if (!targetUserId) {
-      return new Response(JSON.stringify({ message: "No target user specified" }), { status: 200 })
+    if (targetUserIds.length === 0) {
+      return new Response(JSON.stringify({ message: "No target users found" }), { status: 200, headers: corsHeaders })
     }
 
-    // Fetch the FCM token for the target user
+    // Fetch the FCM tokens for the target users
     const { data: tokens, error } = await supabaseClient
       .from('user_fcm_tokens')
       .select('token')
-      .eq('user_id', targetUserId)
+      .in('user_id', targetUserIds)
 
     if (error || !tokens || tokens.length === 0) {
-      console.log('No FCM tokens found for user:', targetUserId)
-      return new Response(JSON.stringify({ message: "No tokens found" }), { status: 200 })
+      console.log('No FCM tokens found for users:', targetUserIds)
+      return new Response(JSON.stringify({ message: "No tokens found" }), { status: 200, headers: corsHeaders })
     }
 
     // Send the push notification via Firebase Admin SDK
@@ -69,10 +81,10 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, message: "Push notification sent" }),
-      { headers: { "Content-Type": "application/json" } },
+      { headers: { "Content-Type": "application/json", ...corsHeaders } },
     )
   } catch (err) {
     console.error("Failed to process notification:", err)
-    return new Response(String(err?.message ?? err), { status: 500 })
+    return new Response(String(err?.message ?? err), { status: 500, headers: corsHeaders })
   }
 })

@@ -50,6 +50,15 @@ export async function sendAnnouncement(payload: {
     flat_number: null, // null targets all flats in the society
   });
 
+  // Send Push Notification to all society members
+  supabase.functions.invoke("send-notification", {
+    body: {
+      title: `Notice: ${payload.title}`,
+      body: payload.body,
+      societyId: userCtx.society_id
+    }
+  }).catch(err => console.error("Push notification failed:", err));
+
   return {
     id: data.id,
     title: data.title,

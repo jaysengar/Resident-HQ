@@ -164,6 +164,17 @@ export async function sendReminder(flatNo: string): Promise<{ success: boolean; 
   });
 
   if (error) throw new Error(error.message);
+
+  // Send Push Notification
+  supabase.functions.invoke("send-notification", {
+    body: {
+      title: "Payment Reminder",
+      body: `Your maintenance dues are pending. Please pay at your earliest convenience.`,
+      societyId: userCtx.society_id,
+      flatNumber: flatNo
+    }
+  }).catch(err => console.error("Push notification failed:", err));
+
   return { success: true, message: `Payment reminder sent to ${flatNo}` };
 }
 

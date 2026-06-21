@@ -45,6 +45,25 @@ export async function requestEntry(
 
   if (error) throw new Error(error.message);
 
+  // Send push notification to the resident
+  supabase.functions.invoke("send-notification", {
+    body: {
+      title: "Visitor Alert",
+      body: `${payload.name} is at the gate. Please approve or deny.`,
+      societyId: userCtx.society_id,
+      flatNumber: payload.flatNo
+    }
+  }).catch(err => console.error("Push notification failed:", err));
+
+  // Also log into notifications table for in-app panel
+  supabase.from("notifications").insert({
+    society_id: userCtx.society_id,
+    flat_number: payload.flatNo,
+    type: "visitor",
+    title: "Visitor Alert",
+    body: `${payload.name} is at the gate. Please approve or deny.`
+  }).then();
+
   // Use Realtime to wait for approval
   return new Promise((resolve) => {
     // Timeout after 60s
