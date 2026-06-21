@@ -17,7 +17,7 @@ export const Route = createFileRoute("/app")({
       } else if (user?.role === "admin") {
         throw redirect({ to: `/admin` });
       } else {
-        throw redirect({ to: `/${slug}/dashboard` });
+        throw redirect({ to: `/${slug}` });
       }
     }
   },

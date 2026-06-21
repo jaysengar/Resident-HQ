@@ -19,7 +19,7 @@ export const Route = createFileRoute("/app-login")({
       } else if (user?.role === "admin") {
         throw redirect({ to: `/admin` });
       } else {
-        throw redirect({ to: `/${slug}/dashboard` });
+        throw redirect({ to: `/${slug}` });
       }
     }
   },
@@ -71,7 +71,7 @@ function MobileLogin() {
           } else if (profile?.role === "admin") {
             navigate({ to: `/admin` });
           } else {
-            navigate({ to: `/${slug}/dashboard` });
+            navigate({ to: `/${slug}` });
           }
         }, 500);
         return;
@@ -79,7 +79,7 @@ function MobileLogin() {
 
       toast.success("Successfully logged in");
       setTimeout(() => {
-        navigate({ to: "/demo/dashboard" });
+        navigate({ to: "/demo" });
       }, 500);
     } catch (err: any) {
       toast.error(err.message || "Invalid credentials");

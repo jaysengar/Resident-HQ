@@ -75,7 +75,7 @@ function GlobalLogin() {
       if (userData.role === "admin") window.location.href = "/admin";
       else if (userData.role === "manager") window.location.href = `/${slug}/manager`;
       else if (userData.role === "guard") window.location.href = `/${slug}/guard`;
-      else window.location.href = `/${slug}/`;
+      else window.location.href = `/${slug}`;
     } catch (err: any) {
       toast.error(err.message || "Invalid credentials");
     } finally {
