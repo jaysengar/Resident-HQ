@@ -18,7 +18,8 @@ import {
   getNotifications,
   markNotificationRead,
   markAllNotificationsRead,
-} from "@/lib/api/api";
+} from "@/lib/api/notifications";
+import { useAuth } from "@/context/AuthContext";
 
 interface Notification {
   id: string;
@@ -66,6 +67,7 @@ export function NotificationPanel({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [markingAll, setMarkingAll] = useState(false);
+  const { user } = useAuth();
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -80,6 +82,49 @@ export function NotificationPanel({
       setLoading(false);
     }
   }, [onUnreadCountChange]);
+
+  useEffect(() => {
+    fetchNotifications();
+    
+    if (user?.societyId) {
+      let channel: any;
+      import("@/lib/supabase").then(({ supabase }) => {
+        channel = supabase
+          .channel(`notifications_${user.id}`)
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "notifications",
+              filter: `society_id=eq.${user.societyId}`
+            },
+            (payload) => {
+              const newNotif = payload.new as Notification;
+              
+              // Only process if it belongs to this user's flat or is society-wide
+              if (!newNotif.flat_number || newNotif.flat_number === user.flat) {
+                setNotifications((prev) => [newNotif, ...prev]);
+                onUnreadCountChange?.((prev) => prev + 1);
+                
+                // Show a toast notification
+                toast(newNotif.title, {
+                  description: newNotif.body || newNotif.message,
+                  icon: <Bell size={16} className="text-violet-500" />
+                });
+              }
+            }
+          )
+          .subscribe();
+      });
+
+      return () => {
+        if (channel) {
+          import("@/lib/supabase").then(({ supabase }) => supabase.removeChannel(channel));
+        }
+      };
+    }
+  }, [fetchNotifications, user?.societyId, user?.flat, user?.id]);
 
   useEffect(() => {
     if (open) {

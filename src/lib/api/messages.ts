@@ -42,6 +42,18 @@ export async function sendDirectMessage(content: string, targetFlat?: string): P
     .single();
 
   if (error) throw new Error(error.message);
+
+  // If a manager sends a message to a resident, create a notification for them
+  if (userCtx.role === "manager" && targetFlat) {
+    await supabase.from("notifications").insert({
+      society_id: userCtx.society_id,
+      flat_number: targetFlat,
+      title: "New Message from Manager",
+      message: content.length > 50 ? content.substring(0, 47) + "..." : content,
+      type: "message", // custom type for UI if needed
+    });
+  }
+
   return data as DirectMessage;
 }
 
