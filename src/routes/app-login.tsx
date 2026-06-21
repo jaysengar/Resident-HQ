@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Mail, Lock, LogIn } from "lucide-react";
 import { toast } from "sonner";
@@ -32,6 +32,27 @@ function MobileLogin() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  // Client-side redirect if session exists (bypasses SSR limitations)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        supabase.from("users").select("role, societies(slug)").eq("id", session.user.id).single()
+          .then(({ data: profile }) => {
+            const slug = (profile as any)?.societies?.slug || "demo";
+            if (profile?.role === "guard") {
+              navigate({ to: `/${slug}/guard` });
+            } else if (profile?.role === "manager") {
+              navigate({ to: `/${slug}/manager` });
+            } else if (profile?.role === "admin") {
+              navigate({ to: `/admin` });
+            } else {
+              navigate({ to: `/${slug}` });
+            }
+          });
+      }
+    });
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

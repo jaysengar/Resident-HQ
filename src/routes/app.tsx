@@ -24,7 +24,32 @@ export const Route = createFileRoute("/app")({
   component: MobileAppLanding,
 });
 
+import { useEffect } from "react";
+import { useRouter } from "@tanstack/react-router";
+
 function MobileAppLanding() {
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        supabase.from("users").select("role, societies(slug)").eq("id", session.user.id).single()
+          .then(({ data: user }) => {
+            const slug = (user as any)?.societies?.slug || "demo";
+            if (user?.role === "guard") {
+              router.navigate({ to: `/${slug}/guard` });
+            } else if (user?.role === "manager") {
+              router.navigate({ to: `/${slug}/manager` });
+            } else if (user?.role === "admin") {
+              router.navigate({ to: `/admin` });
+            } else {
+              router.navigate({ to: `/${slug}` });
+            }
+          });
+      }
+    });
+  }, [router]);
+
   return (
     <div className="fixed inset-0 bg-[#f0f4f8] overflow-hidden flex flex-col justify-between selection:bg-brand/30">
       {/* Background Image full screen */}
