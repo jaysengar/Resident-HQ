@@ -276,6 +276,17 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
         flatNo: currentUser.flat,
         residentName: currentUser.name,
       });
+
+      // Notify the guard about the new ticket
+      supabase.functions.invoke("send-notification", {
+        body: {
+          title: "New Helpdesk Ticket",
+          body: `Flat ${currentUser.flat} raised a ticket: ${t.title}`,
+          societyId: currentUser.society_id,
+          role: "guard"
+        }
+      }).catch(err => console.error("Ticket push notification failed:", err));
+
       toast.success("Ticket raised successfully");
       refreshAll();
     } catch {

@@ -40,32 +40,38 @@ serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   )
 
-  try {
-    const payload = await req.json()
-    const { title, body, userIds, societyId, flatNumber } = payload
+    try {
+      const payload = await req.json()
+      const { title, body, userIds, societyId, flatNumber, role } = payload
 
-    console.log(`Processing notification: ${title}`)
+      console.log(`Processing notification: ${title}`)
 
-    let targetUserIds: string[] = [];
+      let targetUserIds: string[] = [];
 
-    if (userIds && userIds.length > 0) {
-      targetUserIds = userIds;
-    } else if (societyId) {
-      // Find users by societyId using adminClient to bypass RLS
-      let query = adminClient.from('users').select('id').eq('society_id', societyId);
-      if (flatNumber) {
-        // ILIKE for case-insensitive matching, just in case
-        query = query.ilike('flat_no', flatNumber);
+      if (userIds && userIds.length > 0) {
+        targetUserIds = userIds;
+      } else if (societyId) {
+        // Find users by societyId using adminClient to bypass RLS
+        let query = adminClient.from('users').select('id').eq('society_id', societyId);
+        
+        if (flatNumber) {
+          // ILIKE for case-insensitive matching
+          query = query.ilike('flat_no', flatNumber);
+        }
+        
+        if (role) {
+          query = query.eq('role', role);
+        }
+        
+        const { data: users, error: usersErr } = await query;
+        if (!usersErr && users) {
+          targetUserIds = users.map(u => u.id);
+        }
       }
-      const { data: users, error: usersErr } = await query;
-      if (!usersErr && users) {
-        targetUserIds = users.map(u => u.id);
-      }
-    }
 
-    if (targetUserIds.length === 0) {
-      return new Response(JSON.stringify({ message: "No target users found" }), { status: 200, headers: corsHeaders })
-    }
+      if (targetUserIds.length === 0) {
+        return new Response(JSON.stringify({ message: "No target users found" }), { status: 200, headers: corsHeaders })
+      }
 
     // Fetch the FCM tokens for the target users using adminClient
     const { data: tokens, error } = await adminClient
