@@ -41,6 +41,15 @@ export async function sendAnnouncement(payload: {
 
   if (error) throw new Error(error.message);
 
+  // Also broadcast a notification to all residents
+  await supabase.from("notifications").insert({
+    society_id: userCtx.society_id,
+    type: "announcement",
+    title: `Notice: ${payload.title}`,
+    body: payload.body,
+    flat_number: null, // null targets all flats in the society
+  });
+
   return {
     id: data.id,
     title: data.title,
