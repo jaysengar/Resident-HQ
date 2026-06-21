@@ -55,6 +55,16 @@ export async function sendDirectMessage(content: string, targetFlat?: string): P
     if (notifError) {
       console.error("Failed to insert notification:", notifError);
     }
+
+    // Trigger native push notification to the resident's phone
+    supabase.functions.invoke("send-notification", {
+      body: {
+        title: "New Message from Manager",
+        body: content.length > 50 ? content.substring(0, 47) + "..." : content,
+        flatNumber: targetFlat,
+        societyId: userCtx.society_id
+      }
+    }).catch(err => console.error("Push notification failed:", err));
   }
 
   return data as DirectMessage;
