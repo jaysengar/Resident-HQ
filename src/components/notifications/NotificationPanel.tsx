@@ -24,7 +24,7 @@ interface Notification {
   id: string;
   user_id: string;
   title: string;
-  message: string;
+  body: string;
   type?: string;
   is_read: boolean;
   created_at: string;
@@ -265,7 +265,7 @@ export function NotificationPanel({
                             {notif.title}
                           </p>
                           <p className="text-xs text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
-                            {notif.message}
+                            {notif.body}
                           </p>
                           <p className="text-[10px] text-zinc-600 mt-1.5 font-medium">
                             {getTimeAgo(notif.created_at)}
