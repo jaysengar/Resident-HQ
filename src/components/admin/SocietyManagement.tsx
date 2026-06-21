@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Building2, MapPin, Trash2 } from "lucide-react";
+import { Plus, Building2, MapPin, Trash2, Key } from "lucide-react";
 import { useAdmin } from "@/context/AdminContext";
 import { OnboardSocietyForm } from "./OnboardSocietyForm";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export function SocietyManagement() {
   const { societies, loading, fetchSocieties, handleToggleAccess, handleDeleteSociety } = useAdmin();
@@ -16,6 +18,26 @@ export function SocietyManagement() {
     Basic: "bg-blue-500/20 text-blue-400",
     Pro: "bg-violet-500/20 text-violet-400",
     Enterprise: "bg-amber-500/20 text-amber-400",
+  };
+
+  const handleChangePassword = async (email: string) => {
+    const newPassword = window.prompt(`Enter new password for manager (${email}):`);
+    if (!newPassword) return;
+
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    try {
+      const { error } = await supabase.functions.invoke("admin-change-password", {
+        body: { email, newPassword }
+      });
+      if (error) throw error;
+      toast.success("Manager password changed successfully!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to change password");
+    }
   };
 
   return (
@@ -128,13 +150,22 @@ export function SocietyManagement() {
                       />
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => handleDeleteSociety(s.id)}
-                        className="p-2 text-muted-foreground hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
-                        title="Delete Society"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => handleChangePassword(s.adminEmail)}
+                          className="p-2 text-muted-foreground hover:text-amber-500 transition-colors rounded-lg hover:bg-amber-500/10"
+                          title="Change Manager Password"
+                        >
+                          <Key size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSociety(s.id)}
+                          className="p-2 text-muted-foreground hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
+                          title="Delete Society"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 ))}
