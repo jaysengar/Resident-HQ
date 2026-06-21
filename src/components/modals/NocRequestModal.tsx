@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Truck, Calendar, FileText } from "lucide-react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { submitNocRequest } from "@/lib/api/api";
 import { toast } from "sonner";
 
@@ -37,9 +38,9 @@ export function NocRequestModal({ open, onClose }: Props) {
 
   if (!open) return null;
 
-  return (
+  const content = (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -132,4 +133,7 @@ export function NocRequestModal({ open, onClose }: Props) {
       </div>
     </AnimatePresence>
   );
+
+  if (typeof document === "undefined") return content;
+  return createPortal(content, document.body);
 }

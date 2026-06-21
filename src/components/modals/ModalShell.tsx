@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 
 export function ModalShell({
@@ -13,14 +14,14 @@ export function ModalShell({
   title: string;
   children: ReactNode;
 }) {
-  return (
+  const content = (
     <AnimatePresence>
       {open && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center"
+          className="fixed inset-0 z-[999] flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center"
           onClick={onClose}
         >
           <motion.div
@@ -47,4 +48,7 @@ export function ModalShell({
       )}
     </AnimatePresence>
   );
+
+  if (typeof document === "undefined") return content;
+  return createPortal(content, document.body);
 }

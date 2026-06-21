@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { triggerEmergency } from "@/lib/api/api";
 import { toast } from "sonner";
 
@@ -59,4 +60,7 @@ export function SOSModal({ open, onClose }: { open: boolean; onClose: () => void
       </div>
     </AnimatePresence>
   );
+
+  if (typeof document === "undefined") return content;
+  return createPortal(content, document.body);
 }
