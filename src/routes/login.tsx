@@ -62,6 +62,14 @@ function GlobalLogin() {
         throw new Error("No society assigned to your account.");
       }
 
+      // Try to register for push notifications (fails silently on web, succeeds on Android/iOS via Capacitor)
+      try {
+        const { registerForPushNotifications } = await import("@/lib/notifications");
+        await registerForPushNotifications(authData.user.id);
+      } catch (e) {
+        console.error("Push notification registration skipped", e);
+      }
+
       toast.success("Login successful");
       
       if (userData.role === "admin") window.location.href = "/admin";

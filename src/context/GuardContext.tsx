@@ -50,19 +50,22 @@ export function GuardProvider({
   const fetchEntries = useCallback(async () => {
     setLoading(true);
     try {
+      const api = await import("@/lib/api/api");
+      
       const [data, ticketsData, annsData, nocData] = await Promise.all([
-        import("@/lib/api/api").then((m) => m.getActiveEntries()),
-        import("@/lib/api/api").then((m) => m.getHelpdeskTickets()),
-        import("@/lib/api/api").then((m) => m.getAnnouncements()),
-        import("@/lib/api/api").then((m) => m.getNocRequests()),
+        api.getActiveEntries().catch((e) => { console.error("Active entries error:", e); return []; }),
+        api.getHelpdeskTickets().catch((e) => { console.error("Tickets error:", e); return []; }),
+        api.getAnnouncements().catch((e) => { console.error("Announcements error:", e); return []; }),
+        api.getNocRequests().catch((e) => { console.error("NOC error:", e); return []; }),
       ]);
-      setEntries(data.filter((e) => e.status === "approved"));
+      
+      setEntries(data.filter((e: any) => e.status === "approved"));
       setNocRequests(nocData);
-      // For guards, we show open or in progress tickets
-      setTickets(ticketsData.filter((t) => t.status !== "Resolved"));
+      setTickets(ticketsData.filter((t: any) => t.status !== "Resolved"));
       setAnnouncements(annsData);
-    } catch {
-      toast.error("Failed to load entries or tickets");
+    } catch (error) {
+      console.error("Critical error loading guard dashboard:", error);
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }

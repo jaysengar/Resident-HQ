@@ -8,12 +8,19 @@ export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      const { data: user } = await supabase.from("users").select("role").eq("id", session.user.id).single();
+      const { data: user } = await supabase.from("users").select("role, societies(slug)").eq("id", session.user.id).single();
+      const slug = (user as any)?.societies?.slug || "demo";
       if (user?.role === "guard") {
-        throw redirect({ to: "/m/guard/dashboard" });
+        throw redirect({ to: `/${slug}/guard` });
+      } else if (user?.role === "manager") {
+        throw redirect({ to: `/${slug}/manager` });
+      } else if (user?.role === "admin") {
+        throw redirect({ to: `/admin` });
       } else {
-        throw redirect({ to: "/m/resident/dashboard" });
+        throw redirect({ to: `/${slug}/dashboard` });
       }
+    } else {
+      throw redirect({ to: "/login" });
     }
   },
   component: MobileAppLanding,
