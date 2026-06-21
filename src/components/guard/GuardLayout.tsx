@@ -77,15 +77,15 @@ export function GuardLayout() {
   ];
 
   return (
-    <div className="dark h-[100dvh] w-full bg-black text-foreground selection:bg-primary/30">
-      <div className="mx-auto flex h-[100dvh] w-full max-w-[480px] flex-col bg-background shadow-[0_0_80px_-15px_rgba(0,0,0,0.5)] relative overflow-hidden">
+    <div className="h-[100dvh] w-full bg-[#f0f4f8] text-gray-900 selection:bg-brand/30">
+      <div className="mx-auto flex h-[100dvh] w-full max-w-[480px] flex-col bg-[#f0f4f8] relative overflow-hidden">
         <main className="flex-1 overflow-y-auto px-5 pb-6">
           <GuardHeader />
 
           {/* Code Verification Input */}
           <section className="mt-5">
             <form onSubmit={handleVerifyCode} className="relative group">
-              <div className="absolute inset-y-0 left-4 flex items-center text-primary/50 group-focus-within:text-primary transition-colors">
+              <div className="absolute inset-y-0 left-4 flex items-center text-gray-400 group-focus-within:text-brand transition-colors">
                 <KeyRound size={18} />
               </div>
               <input
@@ -94,7 +94,7 @@ export function GuardLayout() {
                 onChange={(e) => setEntryCode(e.target.value)}
                 placeholder="Enter 6-digit Pre-approval Code"
                 disabled={verifying}
-                className="w-full rounded-[1.5rem] border border-white/10 bg-zinc-900/80 backdrop-blur-xl py-4 pl-11 pr-24 text-sm font-bold tracking-widest text-white placeholder:text-white/30 placeholder:font-normal placeholder:tracking-normal focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all duration-300 outline-none shadow-xl"
+                className="w-full rounded-[1.5rem] border border-gray-200 bg-white py-4 pl-11 pr-24 text-sm font-bold tracking-widest text-gray-900 placeholder:text-gray-400 placeholder:font-normal placeholder:tracking-normal focus:border-brand focus:ring-4 focus:ring-brand/10 transition-all duration-300 outline-none shadow-sm"
               />
               <motion.button
                 whileTap={{ scale: 0.96 }}
@@ -120,15 +120,14 @@ export function GuardLayout() {
                   whileTap={{ scale: 0.93 }}
                   whileHover={{ y: -4, scale: 1.02 }}
                   onClick={a.onClick}
-                  className="group relative overflow-hidden flex flex-col items-center gap-3 rounded-[1.5rem] border border-white/5 bg-zinc-900/60 backdrop-blur-xl p-4 text-center transition-all duration-300 hover:bg-zinc-800/80 shadow-lg hover:shadow-2xl hover:border-white/10"
+                  className="group relative overflow-hidden flex flex-col items-center gap-3 rounded-[1.5rem] border border-gray-200 bg-white p-4 text-center transition-all duration-300 hover:bg-gray-50 shadow-sm hover:shadow-md"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div
-                    className={`relative grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br ${a.tint} text-white shadow-lg group-hover:shadow-xl transition-all duration-300`}
+                    className="relative grid h-14 w-14 place-items-center rounded-2xl bg-gray-50 text-gray-700 group-hover:text-brand transition-all duration-300"
                   >
                     <a.icon size={26} className="group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                  <span className="text-xs font-bold text-foreground/90 tracking-wide">
+                  <span className="text-xs font-bold text-gray-800 tracking-wide">
                     {a.label}
                   </span>
                 </motion.button>
@@ -167,10 +166,10 @@ export function GuardLayout() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="rounded-[1.5rem] border border-white/5 bg-zinc-900/50 p-8 text-center shadow-lg"
+                      className="rounded-[1.5rem] border border-gray-200 bg-white p-8 text-center shadow-sm"
                     >
-                      <Users size={32} className="mx-auto text-white/20 mb-3" />
-                      <p className="text-xs text-white/50 font-medium">
+                      <Users size={32} className="mx-auto text-gray-300 mb-3" />
+                      <p className="text-xs text-gray-500 font-medium">
                         No one currently inside. Entries will appear here.
                       </p>
                     </motion.div>
@@ -194,17 +193,17 @@ export function GuardLayout() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     key={t.id} 
-                    className="rounded-[1.5rem] border border-white/5 bg-zinc-900/60 backdrop-blur-md p-5 hover:bg-zinc-800/60 transition-all shadow-lg"
+                    className="rounded-[1.5rem] border border-gray-200 bg-white p-5 hover:bg-gray-50 transition-all shadow-sm"
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full inline-block mb-1.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-brand bg-brand/10 px-2 py-0.5 rounded-full inline-block mb-1.5">
                           {t.category || "Request"}
                         </span>
-                        <h3 className="text-sm font-semibold mt-0.5">{t.title}</h3>
-                        <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1.5">
-                          <span className="font-medium text-foreground/80">Flat {t.flatNo}</span>
-                          <span className="w-1 h-1 rounded-full bg-border"></span>
+                        <h3 className="text-sm font-semibold mt-0.5 text-gray-900">{t.title}</h3>
+                        <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1.5">
+                          <span className="font-medium text-gray-700">Flat {t.flatNo}</span>
+                          <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                           {t.residentName}
                         </p>
                       </div>
@@ -215,7 +214,7 @@ export function GuardLayout() {
                   </motion.div>
                 ))
               ) : (
-                <div className="rounded-[1.5rem] border border-dashed border-white/10 bg-zinc-900/30 p-6 text-center text-xs text-white/40 font-medium">
+                <div className="rounded-[1.5rem] border border-dashed border-gray-300 bg-gray-50 p-6 text-center text-xs text-gray-500 font-medium">
                   No pending flat needs.
                 </div>
               )}
@@ -238,7 +237,7 @@ export function GuardLayout() {
                   />
                 ))
               ) : (
-                <div className="rounded-[1.5rem] border border-dashed border-white/10 bg-zinc-900/30 p-5 text-center text-xs text-white/40 font-medium">
+                <div className="rounded-[1.5rem] border border-dashed border-gray-300 bg-gray-50 p-5 text-center text-xs text-gray-500 font-medium">
                   No recent announcements.
                 </div>
               )}

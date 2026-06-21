@@ -1,8 +1,21 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Shield, ChevronRight } from "lucide-react";
 
+import { supabase } from "@/lib/supabase";
+
 export const Route = createFileRoute("/app")({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const { data: user } = await supabase.from("users").select("role").eq("id", session.user.id).single();
+      if (user?.role === "guard") {
+        throw redirect({ to: "/m/guard/dashboard" });
+      } else {
+        throw redirect({ to: "/m/resident/dashboard" });
+      }
+    }
+  },
   component: MobileAppLanding,
 });
 

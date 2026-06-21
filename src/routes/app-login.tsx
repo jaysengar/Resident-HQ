@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Mail, Lock, LogIn } from "lucide-react";
@@ -7,6 +7,17 @@ import { supabase } from "@/lib/supabase";
 import { registerForPushNotifications } from "@/lib/notifications";
 
 export const Route = createFileRoute("/app-login")({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const { data: user } = await supabase.from("users").select("role").eq("id", session.user.id).single();
+      if (user?.role === "guard") {
+        throw redirect({ to: "/m/guard/dashboard" });
+      } else {
+        throw redirect({ to: "/m/resident/dashboard" });
+      }
+    }
+  },
   component: MobileLogin,
 });
 

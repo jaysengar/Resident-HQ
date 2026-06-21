@@ -60,7 +60,7 @@ export function GuardHeader() {
 
       {/* Date/Time Bar */}
       <div
-        className="mt-3 flex items-center gap-3 rounded-[1.25rem] border border-white/5 bg-zinc-900/60 backdrop-blur-md px-4 py-3 shadow-lg"
+        className="mt-3 flex items-center gap-3 rounded-[1.25rem] border border-gray-200 bg-white px-4 py-3 shadow-sm"
       >
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <Clock size={14} />
