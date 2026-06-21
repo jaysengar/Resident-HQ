@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Loader2, QrCode, ShieldCheck } from "lucide-react";
+import { CircleNotch, QrCode, ShieldCheck } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { ModalShell } from "./ModalShell";
 import { useApp } from "@/context/AppContext";
@@ -108,7 +108,7 @@ export function PaymentModal({ open, onClose, bill }: { open: boolean; onClose: 
     <ModalShell open={open} onClose={onClose} title="Pay via UPI">
       <div className="rounded-2xl border border-border/60 bg-card p-5 text-center">
         <div className="mx-auto grid h-44 w-44 place-items-center rounded-2xl bg-gradient-to-br from-secondary to-accent">
-          <QrCode size={120} className="text-foreground" />
+          <QrCode size={120} weight="regular" className="text-foreground" />
         </div>
         <p className="mt-4 text-xs text-muted-foreground">Scan with any UPI app or tap below</p>
         <p className="mt-2 text-2xl font-bold text-foreground">
@@ -126,11 +126,11 @@ export function PaymentModal({ open, onClose, bill }: { open: boolean; onClose: 
       >
         {processing ? (
           <>
-            <Loader2 size={16} className="animate-spin" /> Processing…
+            <CircleNotch size={16} className="animate-spin" /> Processing…
           </>
         ) : (
           <>
-            <ShieldCheck size={16} /> Pay with Razorpay
+            <ShieldCheck size={16} weight="fill" /> Pay with Razorpay
           </>
         )}
       </motion.button>

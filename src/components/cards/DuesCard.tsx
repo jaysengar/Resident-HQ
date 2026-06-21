@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, IndianRupee } from "lucide-react";
+import { ArrowUpRight, CurrencyInr } from "@phosphor-icons/react";
 import { useApp } from "@/context/AppContext";
 
 function Pill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-white/15 px-3 py-2 backdrop-blur">
+    <div className="rounded-xl bg-card/15 px-3 py-2 backdrop-blur">
       <p className="opacity-75">{label}</p>
       <p className="mt-0.5 font-semibold">{value}</p>
     </div>
@@ -23,11 +23,11 @@ export function DuesCard({ onPay }: { onPay: () => void }) {
         className="mt-5 overflow-hidden rounded-3xl p-6 text-primary-foreground relative"
         style={{ background: "var(--gradient-card)", boxShadow: "var(--shadow-elevated)" }}
       >
-        <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10" />
+        <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 dark:bg-black/10" />
         <div className="relative">
           <p className="text-xs uppercase tracking-wider opacity-80">Total Outstanding</p>
           <div className="mt-2 flex items-baseline gap-1">
-            <IndianRupee size={26} className="opacity-90" />
+            <CurrencyInr size={26} weight="bold" className="opacity-90" />
             <span className="text-5xl font-bold tracking-tight">
               {currentUser.balance.toLocaleString("en-IN")}
             </span>

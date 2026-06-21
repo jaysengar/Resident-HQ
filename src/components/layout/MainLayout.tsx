@@ -12,8 +12,8 @@ export function MainLayout() {
   const { tab } = useApp();
   const [sosOpen, setSosOpen] = useState(false);
   return (
-    <div className="dark h-[100dvh] w-full bg-black text-foreground selection:bg-primary/30">
-      <div className="mx-auto flex h-[100dvh] w-full max-w-[480px] flex-col bg-background shadow-[0_0_80px_-15px_rgba(0,0,0,0.5)] relative overflow-hidden">
+    <div className="h-[100dvh] w-full bg-background text-foreground selection:bg-primary/30">
+      <div className="mx-auto flex h-[100dvh] w-full max-w-[480px] flex-col bg-background shadow-elevated relative overflow-hidden">
         
 
 

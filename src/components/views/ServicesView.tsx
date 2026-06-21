@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search,
+  MagnifyingGlass as Search,
   Plus,
-  Droplet,
-  Zap,
+  Drop as Droplet,
+  Lightning as Zap,
   Hammer,
-  Sparkles,
+  Sparkle as Sparkles,
   ShieldCheck,
   Wrench,
   Users,
   Car,
   Megaphone,
   FileText,
-  Download
-} from "lucide-react";
+  DownloadSimple as Download
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useApp } from "@/context/AppContext";
@@ -162,7 +162,7 @@ export function ServicesView() {
                           ? "bg-muted text-muted-foreground"
                           : "bg-primary text-primary-foreground"
                       }`}>
-                        <Users size={22} />
+                        <Users size={24} weight="fill" />
                       </div>
                       <span className={`text-xs font-semibold ${
                         user?.subscriptionPlan === "Basic" ? "text-muted-foreground" : "text-primary"
@@ -184,7 +184,7 @@ export function ServicesView() {
                     style={{ boxShadow: "var(--shadow-soft)" }}
                   >
                     <div className={`grid h-12 w-12 place-items-center rounded-xl ${c.color}`}>
-                      <c.icon size={22} />
+                      <c.icon size={24} weight="duotone" />
                     </div>
                     <span className="text-xs font-medium text-foreground">{c.label}</span>
                   </motion.button>
@@ -217,7 +217,7 @@ export function ServicesView() {
                 documents.map((doc) => (
                   <div key={doc.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                     <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                      <FileText size={18} />
+                      <FileText size={20} weight="fill" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-foreground">{doc.title}</p>
@@ -229,7 +229,7 @@ export function ServicesView() {
                       download
                       className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-secondary text-foreground hover:bg-accent"
                     >
-                      <Download size={14} />
+                      <Download size={16} weight="bold" />
                     </motion.a>
                   </div>
                 ))

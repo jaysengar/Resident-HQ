@@ -1,19 +1,19 @@
 import { motion } from "framer-motion";
-import { Home, Wallet, Wrench, Users } from "lucide-react";
+import { House, Wallet, Wrench, UsersThree } from "@phosphor-icons/react";
 import { useApp, type Tab } from "@/context/AppContext";
 
 export function BottomNavigation() {
   const { tab, setTab } = useApp();
   const items: { id: Tab; label: string; icon: any }[] = [
-    { id: "home", label: "Home", icon: Home },
+    { id: "home", label: "Home", icon: House },
     { id: "dues", label: "Dues", icon: Wallet },
     { id: "services", label: "Services", icon: Wrench },
-    { id: "community", label: "Community", icon: Users },
+    { id: "community", label: "Community", icon: UsersThree },
   ];
   return (
-    <nav className="absolute bottom-0 left-0 right-0 z-20 pb-4">
+    <nav className="fixed bottom-0 left-0 right-0 z-20 pb-4 pt-2 bg-gradient-to-t from-background via-background/90 to-transparent">
       <div
-        className="mx-4 mb-2 rounded-[2rem] border border-white/[0.08] bg-card/90 px-2 py-1.5 backdrop-blur-3xl shadow-elevated"
+        className="mx-4 mb-2 rounded-3xl border border-border/50 bg-card/95 px-2 py-1.5 backdrop-blur-3xl shadow-elevated"
       >
         <div className="grid grid-cols-4">
           {items.map((it) => {
@@ -23,7 +23,7 @@ export function BottomNavigation() {
                 key={it.id}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setTab(it.id)}
-                className="relative flex flex-col items-center gap-1.5 py-2.5"
+                className="relative flex flex-col items-center gap-1.5 py-2"
               >
                 {active && (
                   <motion.div
@@ -33,11 +33,11 @@ export function BottomNavigation() {
                     style={{ boxShadow: "0 2px 10px var(--color-primary)" }}
                   />
                 )}
-                <div className={`relative transition-colors duration-300 ${active ? "text-primary drop-shadow-md" : "text-white/40"}`}>
-                  <it.icon size={22} strokeWidth={active ? 2.5 : 1.5} />
+                <div className={`relative transition-colors duration-300 ${active ? "text-primary drop-shadow-md" : "text-muted-foreground"}`}>
+                  <it.icon size={24} weight={active ? "fill" : "regular"} />
                 </div>
                 <span
-                  className={`relative text-[10px] font-bold tracking-wide transition-colors duration-300 ${active ? "text-primary" : "text-white/40"}`}
+                  className={`relative text-[10px] font-bold tracking-wide transition-colors duration-300 ${active ? "text-primary" : "text-muted-foreground"}`}
                 >
                   {it.label}
                 </span>

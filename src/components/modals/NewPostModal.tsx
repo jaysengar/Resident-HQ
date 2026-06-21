@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Image as ImageIcon, Tag, X, Loader2 } from "lucide-react";
+import { Image as ImageIcon, Tag, X, CircleNotch } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { ModalShell } from "./ModalShell";
 import { useApp } from "@/context/AppContext";
@@ -147,7 +147,7 @@ export function NewPostModal({ open, onClose }: { open: boolean; onClose: () => 
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground disabled:opacity-70"
         style={{ boxShadow: "var(--shadow-card)" }}
       >
-        {isUploading && <Loader2 size={16} className="animate-spin" />}
+        {isUploading && <CircleNotch size={16} className="animate-spin" />}
         {isUploading ? "Posting..." : "Post"}
       </motion.button>
     </ModalShell>

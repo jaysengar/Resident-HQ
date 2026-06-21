@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Bell, ChevronRight } from "lucide-react";
+import { Bell, Moon, Sun } from "@phosphor-icons/react";
+import { useTheme } from "next-themes";
 import { NotificationPanel } from "@/components/notifications/NotificationPanel";
 import { ProfileSettingsModal } from "@/components/modals/ProfileSettingsModal";
 
@@ -16,41 +17,56 @@ export function TopHeader({
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <>
-      <header className="sticky top-0 z-10 flex items-center justify-between bg-background/95 backdrop-blur-xl pt-6 pb-2">
+      <header className="sticky top-0 z-10 flex items-center justify-between bg-background/80 backdrop-blur-2xl pt-6 pb-3 border-b border-border/40">
         <div className="flex items-center gap-3 min-w-0">
           {avatar && (
             <button 
               onClick={() => setProfileOpen(true)}
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-semibold shadow-[var(--shadow-card)] transition-transform hover:scale-105 active:scale-95"
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-semibold shadow-[var(--shadow-card)] transition-transform hover:scale-105 active:scale-95"
             >
               {avatar}
             </button>
           )}
           <div className="min-w-0">
-            <p className="text-[11px] uppercase tracking-widest font-bold text-white/50">{subtitle}</p>
+            <p className="text-[11px] uppercase tracking-widest font-bold text-muted-foreground">{subtitle}</p>
             <h1
-              className={`truncate font-extrabold tracking-tight text-white ${avatar ? "text-xl mt-0.5" : "text-3xl"}`}
+              className={`truncate font-extrabold tracking-tight text-foreground ${avatar ? "text-xl mt-0.5" : "text-3xl"}`}
             >
               {title}
             </h1>
           </div>
         </div>
-        <motion.button
-          onClick={() => setNotifOpen(true)}
-          whileTap={{ scale: 0.9 }}
-          className="relative grid h-11 w-11 place-items-center rounded-full bg-secondary text-foreground hover:bg-secondary/80 transition-colors border border-white/5"
-        >
-          <Bell size={20} className="text-white/80" />
-          {unreadCount > 0 && (
-            <span className="absolute top-2 right-2.5 flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-destructive ring-2 ring-background" />
-            </span>
+        <div className="flex items-center gap-2">
+          {mounted && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="grid h-10 w-10 place-items-center rounded-2xl bg-secondary text-foreground hover:bg-secondary/80 transition-colors border border-border/50"
+            >
+              {theme === "dark" ? <Sun size={20} weight="fill" /> : <Moon size={20} weight="fill" />}
+            </motion.button>
           )}
-        </motion.button>
+          <motion.button
+            onClick={() => setNotifOpen(true)}
+            whileTap={{ scale: 0.9 }}
+            className="relative grid h-10 w-10 place-items-center rounded-2xl bg-secondary text-foreground hover:bg-secondary/80 transition-colors border border-border/50"
+          >
+            <Bell size={20} weight="fill" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive border-2 border-background" />
+              </span>
+            )}
+          </motion.button>
+        </div>
       </header>
 
       <NotificationPanel

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Plus, MessageSquare } from "lucide-react";
+import { Plus, ChatText } from "@phosphor-icons/react";
 import { useApp } from "@/context/AppContext";
 import { TopHeader } from "@/components/layout/TopHeader";
 import { FeedPostCard } from "@/components/cards/FeedPostCard";
@@ -32,12 +32,12 @@ export function CommunityView() {
             className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
             style={{ boxShadow: "var(--shadow-card)" }}
           >
-            <Plus size={14} /> Post
+            <Plus size={14} weight="bold" /> Post
           </span>
         </div>
       </button>
 
-      <section className="mt-6 space-y-4">
+      <section className="mt-6 space-y-4 pb-24">
         {!dataReady ? (
           <>
             <SkeletonCard lines={4} />
@@ -46,7 +46,7 @@ export function CommunityView() {
           </>
         ) : communityPosts.length === 0 ? (
           <EmptyState
-            icon={MessageSquare}
+            icon={ChatText}
             title="No posts yet"
             description="Be the first to share something with your community!"
             action={{ label: "Create Post", onClick: () => setOpen(true) }}

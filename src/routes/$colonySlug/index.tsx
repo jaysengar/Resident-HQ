@@ -9,6 +9,7 @@ import { registerForPushNotifications } from "@/lib/notifications";
 import { useEffect, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const Route = createFileRoute("/$colonySlug/")({
   head: () => ({
@@ -41,9 +42,11 @@ function App() {
     <TenantGuard expectedSlug={colonySlug}>
       <ProtectedRoute allowedRoles={["resident"]}>
         <SubscriptionGuard colonySlug={colonySlug} role="resident">
-          <AppProvider colonySlug={colonySlug}>
-            <MainLayout />
-          </AppProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <AppProvider colonySlug={colonySlug}>
+              <MainLayout />
+            </AppProvider>
+          </ThemeProvider>
         </SubscriptionGuard>
       </ProtectedRoute>
     </TenantGuard>

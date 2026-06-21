@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Download, Receipt } from "lucide-react";
+import { CheckCircle, DownloadSimple, Receipt } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useApp } from "@/context/AppContext";
 import { TopHeader, SectionTitle } from "@/components/layout/TopHeader";
@@ -49,7 +49,7 @@ export function DuesView() {
                 style={{ boxShadow: "var(--shadow-soft)" }}
               >
                 <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-destructive/10 text-destructive">
-                  <Receipt size={18} />
+                  <Receipt size={20} weight="fill" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-foreground">{b.title}</p>
@@ -76,7 +76,7 @@ export function DuesView() {
         </div>
       </section>
 
-      <section className="mt-7">
+      <section className="mt-7 pb-24">
         <SectionTitle title="Transaction History" />
         <div className="mt-3 space-y-2.5">
           {!dataReady ? (
@@ -102,7 +102,7 @@ export function DuesView() {
                 style={{ boxShadow: "var(--shadow-soft)" }}
               >
                 <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-success/10 text-success">
-                  <Check size={18} />
+                  <CheckCircle size={20} weight="fill" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-foreground">{t.title}</p>
@@ -127,7 +127,7 @@ export function DuesView() {
                     }}
                     className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-primary"
                   >
-                    <Download size={12} /> Invoice
+                    <DownloadSimple size={14} weight="bold" /> Invoice
                   </motion.button>
                 </div>
               </motion.div>
