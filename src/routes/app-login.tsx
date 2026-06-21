@@ -112,18 +112,19 @@ function MobileLogin() {
   return (
     <div className="min-h-[100dvh] flex flex-col selection:bg-brand/30 relative overflow-hidden">
       {/* Background Image full screen */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-[#f0f4f8]/20" />
+      <div className="absolute inset-0 z-0 bg-black">
+        <div className="absolute inset-0 bg-[url('/textures/building-splash.png')] bg-cover bg-center opacity-40 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
       </div>
 
       {/* Header */}
       <div className="px-6 pt-12 pb-6 relative z-10 flex items-center justify-between">
-        <Link to="/app" className="w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center shadow-sm border border-white/50 text-gray-700 hover:bg-white active:scale-95 transition-all">
+        <Link to="/app" className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center shadow-sm border border-white/20 text-white hover:bg-white/20 active:scale-95 transition-all">
           <ArrowLeft size={20} />
         </Link>
-        <div className="bg-white/80 backdrop-blur-md p-2 rounded-2xl border border-white/50 shadow-sm">
-          <img src="/textures/logo.png" alt="Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
+        {/* Logo removed, replaced with subtle text */}
+        <div className="text-white/70 font-bold tracking-[0.2em] uppercase text-[10px]">
+          Resident HQ
         </div>
         <div className="w-10" /> {/* Spacer for centering */}
       </div>

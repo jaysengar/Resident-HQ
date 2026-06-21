@@ -58,31 +58,23 @@ function MobileAppLanding() {
   return (
     <div className="fixed inset-0 bg-[#f0f4f8] overflow-hidden flex flex-col justify-between selection:bg-brand/30">
       {/* Background Image full screen */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=800&q=80')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#f0f4f8]/50 to-[#f0f4f8]/20" />
+      <div className="absolute inset-0 z-0 bg-black">
+        <div className="absolute inset-0 bg-[url('/textures/building-splash.png')] bg-cover bg-center opacity-80 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/90" />
       </div>
 
-      {/* Top Section - Logo */}
-      <div className="relative z-10 px-6 pt-16 flex flex-col items-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white p-4 rounded-3xl shadow-elevated border border-white/50 mb-6"
-        >
-          <img src="/textures/logo.png" alt="Resident HQ" className="w-16 h-16 object-contain" />
-        </motion.div>
-        
+      {/* Top Section - Cinematic Text */}
+      <div className="relative z-10 px-6 pt-20 flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-center"
+          transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
+          className="text-center flex flex-col items-center gap-3"
         >
-          <h1 className="text-3xl font-black tracking-tight text-gray-900 mb-2">Resident HQ</h1>
-          <p className="text-gray-700 font-medium text-lg px-4">
-            Security & Living, Elevated.
+          <h1 className="text-5xl font-extrabold tracking-tighter text-white drop-shadow-2xl">Resident HQ</h1>
+          <div className="w-12 h-1 bg-brand rounded-full" />
+          <p className="text-white/80 font-semibold text-sm tracking-[0.2em] uppercase mt-2">
+            Smart Society
           </p>
         </motion.div>
       </div>
