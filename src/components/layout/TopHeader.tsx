@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Bell, Moon, Sun } from "@phosphor-icons/react";
+import { Bell, Moon, Sun, CaretRight } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { NotificationPanel } from "@/components/notifications/NotificationPanel";
 import { ProfileSettingsModal } from "@/components/modals/ProfileSettingsModal";
@@ -108,7 +108,7 @@ export function SectionTitle({
           onClick={onAction}
           className="flex items-center gap-0.5 text-xs font-medium text-primary"
         >
-          {action} <ChevronRight size={14} />
+          {action} <CaretRight size={14} weight="bold" />
         </button>
       )}
     </div>
