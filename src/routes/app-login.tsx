@@ -35,23 +35,27 @@ function MobileLogin() {
 
         // Fetch user role to determine redirect path
         const { data: profile } = await supabase
-          .from("profiles")
+          .from("users")
           .select("role")
           .eq("id", data.user.id)
           .single();
 
         toast.success("Successfully logged in");
 
-        if (profile?.role === "guard") {
-          navigate({ to: "/m/guard/dashboard" });
-        } else {
-          navigate({ to: "/m/resident/dashboard" });
-        }
+        setTimeout(() => {
+          if (profile?.role === "guard") {
+            navigate({ to: "/m/guard/dashboard" });
+          } else {
+            navigate({ to: "/m/resident/dashboard" });
+          }
+        }, 500);
         return;
       }
 
       toast.success("Successfully logged in");
-      navigate({ to: "/m/resident/dashboard" });
+      setTimeout(() => {
+        navigate({ to: "/m/resident/dashboard" });
+      }, 500);
     } catch (err: any) {
       toast.error(err.message || "Invalid credentials");
     } finally {
