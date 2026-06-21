@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       let { data, error } = await supabase
         .from("users")
-        .select("role, name, email, phone, society_id, flat_no, societies(slug, name, address, subscription_plan)")
+        .select("role, name, email, phone, society_id, flat_no, societies(slug, name, address, plan)")
         .eq("id", userId)
         .maybeSingle();
         
@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         societySlug: data.societies?.slug,
         societyName: data.societies?.name,
         societyAddress: data.societies?.address,
-        subscriptionPlan: data.societies?.subscription_plan,
+        subscriptionPlan: data.societies?.plan ? (data.societies.plan === "pro" ? "Pro" : data.societies.plan === "enterprise" ? "Enterprise" : "Basic") : "Basic",
         flat: data.flat_no,
         avatar: data.name[0].toUpperCase(),
       });
