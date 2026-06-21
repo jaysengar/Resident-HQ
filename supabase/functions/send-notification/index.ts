@@ -26,10 +26,18 @@ serve(async (req) => {
   }
 
   const authHeader = req.headers.get('Authorization')!
+  
+  // This client uses the caller's JWT
   const supabaseClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     { global: { headers: { Authorization: authHeader } } }
+  )
+
+  // This client uses the service role key to bypass RLS (needed for fetching tokens)
+  const adminClient = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   )
 
   try {
@@ -43,10 +51,11 @@ serve(async (req) => {
     if (userIds && userIds.length > 0) {
       targetUserIds = userIds;
     } else if (societyId) {
-      // Find users by societyId
-      let query = supabaseClient.from('users').select('id').eq('society_id', societyId);
+      // Find users by societyId using adminClient to bypass RLS
+      let query = adminClient.from('users').select('id').eq('society_id', societyId);
       if (flatNumber) {
-        query = query.eq('flat_no', flatNumber);
+        // ILIKE for case-insensitive matching, just in case
+        query = query.ilike('flat_no', flatNumber);
       }
       const { data: users, error: usersErr } = await query;
       if (!usersErr && users) {
@@ -58,8 +67,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ message: "No target users found" }), { status: 200, headers: corsHeaders })
     }
 
-    // Fetch the FCM tokens for the target users
-    const { data: tokens, error } = await supabaseClient
+    // Fetch the FCM tokens for the target users using adminClient
+    const { data: tokens, error } = await adminClient
       .from('user_fcm_tokens')
       .select('token')
       .in('user_id', targetUserIds)
