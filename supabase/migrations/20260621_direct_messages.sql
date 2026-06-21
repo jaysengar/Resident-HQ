@@ -64,3 +64,6 @@ CREATE POLICY "Managers can insert messages for their society"
 -- Index for faster queries
 CREATE INDEX IF NOT EXISTS idx_direct_messages_society_flat ON public.direct_messages(society_id, flat_number);
 CREATE INDEX IF NOT EXISTS idx_direct_messages_created_at ON public.direct_messages(created_at);
+
+-- Add the table to the publication so that WebSocket (Realtime) subscriptions work
+ALTER PUBLICATION supabase_realtime ADD TABLE public.direct_messages;
