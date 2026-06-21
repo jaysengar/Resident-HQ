@@ -15,6 +15,7 @@ import {
   FileText,
   ClipboardList,
   ShoppingBag,
+  MessageSquare,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useManager, type ManagerTab } from "@/context/ManagerContext";
@@ -26,6 +27,7 @@ import { GuardsTable } from "./GuardsTable";
 import { ManagerSettings } from "./ManagerSettings";
 import { ManagerBranding } from "./ManagerBranding";
 import { NocRequestsList } from "./NocRequestsList";
+import { ManagerMessages } from "./ManagerMessages";
 import { isFeatureAvailable, normalizePlan, FEATURE_REGISTRY, type PlanId, type FeatureId, type FeatureMeta } from "@/lib/planGating";
 import { UpgradePlanModal } from "@/components/modals/UpgradePlanModal";
 import { SubscriptionLockModal } from "@/components/modals/SubscriptionLockModal";
@@ -46,6 +48,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "guards", label: "Security Guards", icon: User, featureId: "guards" },
   { id: "dues", label: "Dues Collection", icon: Wallet, featureId: "dues" },
   { id: "helpdesk", label: "Helpdesk Tickets", icon: LifeBuoy, featureId: "helpdesk" },
+  { id: "messages", label: "Messages", icon: MessageSquare },
   { id: "branding", label: "Branding", icon: Palette, featureId: "branding" },
   { id: "settings", label: "Settings", icon: Settings, featureId: "settings" },
 ];
@@ -228,10 +231,11 @@ export function ManagerLayout() {
               {tab === "residents" && <ResidentsTable />}
               {tab === "nocs" && <NocRequestsList />}
               {tab === "guards" && <GuardsTable />}
-              {tab === "dues" && <DuesCollection />}
-              {tab === "helpdesk" && <HelpdeskTickets />}
-              {tab === "branding" && <ManagerBranding currentPlan={currentPlan} />}
-              {tab === "settings" && <ManagerSettings />}
+              { tab === "dues" && <DuesCollection /> }
+              { tab === "helpdesk" && <HelpdeskTickets /> }
+              { tab === "messages" && <ManagerMessages /> }
+              { tab === "branding" && <ManagerBranding currentPlan={currentPlan} /> }
+              { tab === "settings" && <ManagerSettings /> }
             </motion.div>
           </AnimatePresence>
         </main>

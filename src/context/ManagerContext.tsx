@@ -17,7 +17,7 @@ import {
 import { toast } from "sonner";
 import { useSocietyTheme } from "@/hooks/useSocietyTheme";
 
-export type ManagerTab = "dashboard" | "residents" | "guards" | "dues" | "helpdesk" | "nocs" | "settings" | "branding";
+export type ManagerTab = "dashboard" | "residents" | "guards" | "dues" | "helpdesk" | "nocs" | "settings" | "branding" | "messages";
 
 interface ManagerState {
   tab: ManagerTab;
