@@ -79,20 +79,23 @@ export async function getResidents(): Promise<Resident[]> {
 
   if (flatsError) throw new Error(flatsError.message);
 
-  return (flats || []).map((f: any) => ({
-    id: f.users?.[0]?.id || f.flat_number,
-    flatNo: f.flat_number,
-    name: f.users?.[0]?.name || "Unoccupied",
-    phone: f.users?.[0]?.phone || "N/A",
-    email: f.users?.[0]?.email || "N/A",
-    duesStatus: f.dues_status as DuesStatus,
-    duesAmount: f.dues_amount || 0,
-    moveInDate: f.move_in_date ? new Date(f.move_in_date).toISOString().split("T")[0] : "N/A",
-    flatType: f.flat_type || "3 BHK",
-    occupancyType: f.occupancy_type || "Owner",
-    membersCount: f.users?.[0]?.members_count || 1,
-    dueDate: f.due_date || null,
-  }));
+  return (flats || []).map((f: any) => {
+    const user = Array.isArray(f.users) ? f.users[0] : f.users;
+    return {
+      id: user?.id || f.flat_number,
+      flatNo: f.flat_number,
+      name: user?.name || "Unoccupied",
+      phone: user?.phone || "N/A",
+      email: user?.email || "N/A",
+      duesStatus: f.dues_status as DuesStatus,
+      duesAmount: f.dues_amount || 0,
+      moveInDate: f.move_in_date ? new Date(f.move_in_date).toISOString().split("T")[0] : "N/A",
+      flatType: f.flat_type || "3 BHK",
+      occupancyType: f.occupancy_type || "Owner",
+      membersCount: user?.members_count || 1,
+      dueDate: f.due_date || null,
+    };
+  });
 }
 
 export async function addResident(payload: {
