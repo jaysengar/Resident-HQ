@@ -26,6 +26,7 @@ export const Route = createFileRoute("/app")({
 
 import { useEffect } from "react";
 import { useRouter } from "@tanstack/react-router";
+import { registerForPushNotifications } from "@/lib/notifications";
 
 function MobileAppLanding() {
   const router = useRouter();
@@ -33,6 +34,10 @@ function MobileAppLanding() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
+        
+        // Ensure push notifications are registered on auto-login too
+        registerForPushNotifications(session.user.id).catch(err => console.error("Push registration error", err));
+
         supabase.from("users").select("role, societies(slug)").eq("id", session.user.id).single()
           .then(({ data: user }) => {
             const slug = (user as any)?.societies?.slug || "demo";
