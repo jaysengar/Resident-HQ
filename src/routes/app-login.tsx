@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Mail, Lock, LogIn } from "lucide-react";
@@ -14,6 +14,8 @@ function MobileLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,15 +43,15 @@ function MobileLogin() {
         toast.success("Successfully logged in");
 
         if (profile?.role === "guard") {
-          window.location.href = "/m/guard/dashboard";
+          navigate({ to: "/m/guard/dashboard" });
         } else {
-          window.location.href = "/m/resident/dashboard";
+          navigate({ to: "/m/resident/dashboard" });
         }
         return;
       }
 
       toast.success("Successfully logged in");
-      window.location.href = "/m/resident/dashboard"; 
+      navigate({ to: "/m/resident/dashboard" });
     } catch (err: any) {
       toast.error(err.message || "Invalid credentials");
     } finally {
