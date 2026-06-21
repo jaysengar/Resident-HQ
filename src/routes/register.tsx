@@ -71,13 +71,13 @@ const PLAN_DETAILS = [
     price: 5000,
     maxFlats: 100,
     icon: ShieldCheck,
-    color: "emerald",
-    gradient: "from-emerald-500 to-teal-600",
-    glowColor: "rgba(16,185,129,0.25)",
-    borderColor: "border-emerald-500/30",
-    bgColor: "bg-emerald-500/5",
-    textColor: "text-emerald-400",
-    badgeBg: "bg-emerald-500/10",
+    color: "gray",
+    gradient: "from-gray-600 to-gray-800",
+    glowColor: "transparent",
+    borderColor: "border-gray-200",
+    bgColor: "bg-white",
+    textColor: "text-gray-900",
+    badgeBg: "bg-gray-50",
     features: [
       { icon: DoorOpen, text: "Guard App — Visitor Entry/Exit" },
       { icon: Truck, text: "Delivery & Cab Tracking" },
@@ -102,13 +102,13 @@ const PLAN_DETAILS = [
     price: 10000,
     maxFlats: 300,
     icon: Zap,
-    color: "blue",
-    gradient: "from-blue-500 to-indigo-600",
-    glowColor: "rgba(59,130,246,0.3)",
-    borderColor: "border-blue-500/30",
-    bgColor: "bg-blue-500/5",
-    textColor: "text-blue-400",
-    badgeBg: "bg-blue-500/10",
+    color: "red",
+    gradient: "from-brand to-brand-hover",
+    glowColor: "rgba(229,9,20,0.3)",
+    borderColor: "border-brand/50",
+    bgColor: "bg-white",
+    textColor: "text-gray-900",
+    badgeBg: "bg-brand/20",
     popular: true,
     features: [
       { icon: ShieldCheck, text: "Everything in Digital Security" },
@@ -117,37 +117,10 @@ const PLAN_DETAILS = [
       { icon: Headphones, text: "Helpdesk Ticketing System" },
       { icon: ShoppingBag, text: "Buy/Sell Marketplace" },
       { icon: MessageSquare, text: "Resident-to-Resident Feed" },
-    ],
-    locked: [
-      "Automated Bulk Reminders",
-      "Elections & Polling",
-      "Document Vault",
-      "Priority WhatsApp Support",
-      "Audit Logs",
-    ],
-  },
-  {
-    id: "Enterprise",
-    name: "Premium Automation",
-    tagline: "VIP Support & Advanced Features",
-    price: 15000,
-    maxFlats: 1000,
-    icon: Crown,
-    color: "amber",
-    gradient: "from-amber-500 to-orange-600",
-    glowColor: "rgba(245,158,11,0.25)",
-    borderColor: "border-amber-500/30",
-    bgColor: "bg-amber-500/5",
-    textColor: "text-amber-400",
-    badgeBg: "bg-amber-500/10",
-    features: [
-      { icon: Zap, text: "Everything in Smart Operations" },
       { icon: Bell, text: "1-Click Bulk SMS & Push Reminders" },
       { icon: Vote, text: "Secure In-App Elections & Polling" },
       { icon: FileText, text: "Document Vault — Bylaws, Audits" },
-      { icon: Headphones, text: "Priority WhatsApp Support" },
       { icon: Shield, text: "Full Audit Logs & Digital Footprint" },
-      { icon: Sparkles, text: "Custom Branding & White-label" },
     ],
     locked: [],
   },
@@ -285,32 +258,18 @@ function PublicRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030303] text-white selection:bg-violet-500/30 font-sans">
+    <div className="min-h-screen bg-[#f0f4f8] text-gray-900 selection:bg-brand/30 font-sans">
       {/* Fixed Background */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <motion.div
-          animate={{ x: [-20, 20, -20], y: [0, -30, 0] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[5%] left-[5%] w-[500px] h-[500px] bg-violet-600/15 rounded-full blur-[150px]"
-        />
-        <motion.div
-          animate={{ x: [20, -20, 20], y: [0, 30, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[120px]"
-        />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-60" />
-      </div>
+      <div className="fixed inset-0 pointer-events-none -z-10" />
 
       {/* Navbar */}
-      <nav className="flex items-center justify-between px-6 py-4 md:px-12 backdrop-blur-3xl border-b border-white/10 sticky top-0 z-50 bg-[#030303]/70">
+      <nav className="flex items-center justify-between px-6 py-4 md:px-12 backdrop-blur-3xl border-b border-gray-200 sticky top-0 z-50 bg-[#f0f4f8]/95 shadow-lg">
         <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="bg-white text-black p-2 rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-            <Shield size={20} />
-          </div>
-          <span className="text-xl font-black tracking-tight">Resident HQ</span>
+          <img src="/textures/logo.png" alt="Resident HQ Logo" className="w-8 h-8 object-contain" />
+          <span className="text-xl font-black tracking-tight text-gray-900">Resident HQ</span>
         </Link>
         <div className="flex items-center gap-4">
-          <Link to="/login" className="text-sm font-semibold text-gray-400 hover:text-white transition-colors hidden sm:block">
+          <Link to="/login" className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors hidden sm:block">
             Log in
           </Link>
         </div>
@@ -328,21 +287,21 @@ function PublicRegisterPage() {
             {/* Hero */}
             <div className="text-center pt-16 pb-8 px-6">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-violet-400 mb-4">Pricing Plans</p>
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand mb-4">Pricing Plans</p>
                 <h1 className="text-4xl md:text-6xl font-black mb-4 leading-tight">
                   Choose Your{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-amber-400">
+                  <span className="text-brand">
                     Growth Plan
                   </span>
                 </h1>
-                <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                <p className="text-gray-600 text-lg max-w-2xl mx-auto">
                   Start with security essentials, or unlock full automation. Every plan includes instant setup and dedicated infrastructure.
                 </p>
               </motion.div>
             </div>
 
             {/* Plan Cards */}
-            <div className="max-w-7xl mx-auto px-4 md:px-8 pb-20 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+            <div className="max-w-5xl mx-auto px-4 md:px-8 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
               {PLAN_DETAILS.map((p, idx) => (
                 <motion.div
                   key={p.id}
@@ -354,8 +313,8 @@ function PublicRegisterPage() {
                 >
                   {/* Popular Badge */}
                   {p.popular && (
-                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-indigo-600 py-2 text-center">
-                      <span className="text-xs font-black uppercase tracking-[0.15em] text-white">
+                    <div className="absolute top-0 left-0 right-0 bg-brand py-2 text-center">
+                      <span className="text-xs font-black uppercase tracking-[0.15em] text-gray-900">
                         ⚡ Most Popular
                       </span>
                     </div>
@@ -369,16 +328,16 @@ function PublicRegisterPage() {
                       </div>
                       <div>
                         <p className={`text-sm font-bold ${p.textColor} uppercase tracking-wider`}>{p.id}</p>
-                        <p className="text-white font-black text-lg">{p.name}</p>
+                        <p className="text-gray-900 font-black text-lg">{p.name}</p>
                       </div>
                     </div>
 
-                    <p className="text-gray-400 text-sm mb-6">{p.tagline}</p>
+                    <p className="text-gray-600 text-sm mb-6">{p.tagline}</p>
 
                     {/* Price */}
                     <div className="mb-6">
                       <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-black text-white">₹{p.price.toLocaleString("en-IN")}</span>
+                        <span className="text-4xl font-black text-gray-900">₹{p.price.toLocaleString("en-IN")}</span>
                         <span className="text-gray-500 text-sm font-medium">/month</span>
                       </div>
                       <div className={`mt-2 inline-flex items-center gap-1.5 text-xs font-bold ${p.textColor} ${p.badgeBg} px-3 py-1.5 rounded-full border ${p.borderColor}`}>
@@ -400,7 +359,7 @@ function PublicRegisterPage() {
                           <div className={`w-7 h-7 rounded-lg ${p.badgeBg} flex items-center justify-center shrink-0`}>
                             <f.icon size={14} className={p.textColor} />
                           </div>
-                          <span className="text-sm text-gray-300 font-medium">{f.text}</span>
+                          <span className="text-sm text-gray-700 font-medium">{f.text}</span>
                         </motion.div>
                       ))}
                     </div>
@@ -413,7 +372,7 @@ function PublicRegisterPage() {
                         </p>
                         {p.locked.map((l, i) => (
                           <div key={i} className="flex items-center gap-3">
-                            <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                            <div className="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center shrink-0">
                               <Lock size={12} className="text-gray-600" />
                             </div>
                             <span className="text-sm text-gray-600 font-medium line-through">{l}</span>
@@ -436,10 +395,10 @@ function PublicRegisterPage() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handlePlanSelect(p)}
-                      className={`w-full py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition-all ${
+                      className={`w-full py-4 rounded-lg font-bold text-base flex items-center justify-center gap-2 transition-all ${
                         p.popular
-                          ? `bg-gradient-to-r ${p.gradient} text-white shadow-[0_0_30px_${p.glowColor}] hover:shadow-[0_0_50px_${p.glowColor}]`
-                          : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
+                          ? `bg-brand text-white shadow-lg hover:shadow-xl`
+                          : "bg-[#1f1f1f] text-white hover:bg-[#2a2a2a] border border-gray-200"
                       }`}
                     >
                       Get Started
@@ -454,7 +413,7 @@ function PublicRegisterPage() {
             <div className="text-center pb-16 px-6">
               <p className="text-gray-500">
                 Already have an account?{" "}
-                <Link to="/login" className="text-white font-bold hover:underline">
+                <Link to="/login" className="text-gray-900 font-bold hover:underline">
                   Log in
                 </Link>
               </p>
@@ -472,51 +431,50 @@ function PublicRegisterPage() {
             className="flex min-h-[calc(100vh-65px)]"
           >
             {/* Left Panel — Selected Plan Summary */}
-            <div className="hidden lg:flex flex-1 relative items-center justify-center overflow-hidden border-r border-white/10">
-              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-20 mix-blend-luminosity" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-[#030303]/80 to-transparent" />
+            <div className="hidden lg:flex flex-1 relative items-center justify-center overflow-hidden border-r border-gray-200">
+              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center" />
 
               {selectedPlan && (
-                <div className="relative z-10 max-w-md px-12">
+                <div className="relative z-10 w-full max-w-md p-8 mx-12 rounded-[2rem] bg-white/70 backdrop-blur-xl border border-white/50 shadow-elevated">
                   <button
                     onClick={() => setStep("plans")}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8 text-sm font-bold"
+                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors mb-6 text-sm font-bold bg-white/50 px-3 py-1.5 rounded-full w-fit"
                   >
                     <ArrowRight size={16} className="rotate-180" />
                     Change Plan
                   </button>
 
-                  <div className={`w-16 h-16 rounded-3xl bg-gradient-to-br ${selectedPlan.gradient} flex items-center justify-center mb-6 shadow-[0_0_40px_${selectedPlan.glowColor}]`}>
-                    <selectedPlan.icon size={28} className="text-white" />
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${selectedPlan.gradient} flex items-center justify-center mb-5 shadow-[0_0_30px_${selectedPlan.glowColor}]`}>
+                    <selectedPlan.icon size={24} className="text-white" />
                   </div>
 
-                  <h2 className="text-4xl font-black mb-2">{selectedPlan.name}</h2>
-                  <p className={`${selectedPlan.textColor} font-bold text-lg mb-1`}>{selectedPlan.id} Plan</p>
-                  <p className="text-gray-400 mb-8">{selectedPlan.tagline}</p>
+                  <h2 className="text-3xl font-black mb-1">{selectedPlan.name}</h2>
+                  <p className="text-brand font-bold text-base mb-1">{selectedPlan.id} Plan</p>
+                  <p className="text-gray-700 text-sm mb-6">{selectedPlan.tagline}</p>
 
-                  <div className={`p-6 rounded-3xl ${selectedPlan.bgColor} border ${selectedPlan.borderColor} backdrop-blur-xl`}>
+                  <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
                     <div className="flex items-baseline gap-1 mb-4">
-                      <span className="text-3xl font-black text-white">₹{selectedPlan.price.toLocaleString("en-IN")}</span>
-                      <span className="text-gray-500">/month</span>
+                      <span className="text-2xl font-black text-gray-900">₹{selectedPlan.price.toLocaleString("en-IN")}</span>
+                      <span className="text-gray-500 text-sm">/month</span>
                     </div>
 
                     <div className="space-y-2.5">
                       {selectedPlan.features.slice(0, 5).map((f, i) => (
                         <div key={i} className="flex items-center gap-2.5">
-                          <Check size={14} className={selectedPlan.textColor} />
-                          <span className="text-sm text-gray-300">{f.text}</span>
+                          <Check size={14} className="text-brand" />
+                          <span className="text-sm text-gray-700 font-medium">{f.text}</span>
                         </div>
                       ))}
                       {selectedPlan.features.length > 5 && (
-                        <p className={`text-xs font-bold ${selectedPlan.textColor} mt-2`}>
+                        <p className={`text-xs font-bold text-brand mt-3`}>
                           +{selectedPlan.features.length - 5} more features
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="mt-6 flex items-center gap-2 text-gray-500 text-sm">
-                    <Users size={14} />
+                  <div className="mt-5 flex items-center gap-2 text-gray-600 text-sm font-medium px-1">
+                    <Users size={14} className="text-brand" />
                     Up to {selectedPlan.maxFlats} flats included
                   </div>
                 </div>
@@ -530,17 +488,17 @@ function PublicRegisterPage() {
                 <div className="lg:hidden mb-6">
                   <button
                     onClick={() => setStep("plans")}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 text-sm font-bold"
+                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-4 text-sm font-bold"
                   >
                     <ArrowRight size={16} className="rotate-180" />
                     Change Plan
                   </button>
                   <div className={`p-4 rounded-2xl ${selectedPlan.bgColor} border ${selectedPlan.borderColor} flex items-center gap-4`}>
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${selectedPlan.gradient} flex items-center justify-center shrink-0`}>
-                      <selectedPlan.icon size={20} className="text-white" />
+                      <selectedPlan.icon size={20} className="text-gray-900" />
                     </div>
                     <div>
-                      <p className="font-bold text-white">{selectedPlan.name}</p>
+                      <p className="font-bold text-gray-900">{selectedPlan.name}</p>
                       <p className={`text-sm ${selectedPlan.textColor} font-bold`}>₹{selectedPlan.price.toLocaleString("en-IN")}/mo</p>
                     </div>
                   </div>
@@ -554,7 +512,7 @@ function PublicRegisterPage() {
               >
                 <div className="mb-10">
                   <h2 className="text-3xl md:text-4xl font-black mb-2">Onboard Society</h2>
-                  <p className="text-gray-400">Fill in your details to launch your workspace.</p>
+                  <p className="text-gray-600">Fill in your details to launch your workspace.</p>
                 </div>
 
                 {provisioning ? (
@@ -574,10 +532,10 @@ function PublicRegisterPage() {
                           <div
                             className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl transition-colors border ${
                               isComplete
-                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                ? "bg-brand/10 text-brand border-brand/20"
                                 : isActive
                                   ? `${selectedPlan?.bgColor} ${selectedPlan?.textColor} ${selectedPlan?.borderColor}`
-                                  : "bg-[#111] text-gray-500 border-white/10"
+                                  : "bg-gray-50 text-gray-500 border-gray-200"
                             }`}
                           >
                             {isComplete ? (
@@ -589,7 +547,7 @@ function PublicRegisterPage() {
                             )}
                           </div>
                           <div className="flex-1">
-                            <p className={`text-base font-bold ${isComplete ? "text-emerald-400" : isActive ? "text-white" : "text-gray-500"}`}>
+                            <p className={`text-base font-bold ${isComplete ? "text-brand" : isActive ? "text-gray-900" : "text-gray-500"}`}>
                               {isComplete ? s.label.replace("...", " ✓") : s.label}
                             </p>
                             {isActive && (
@@ -612,10 +570,10 @@ function PublicRegisterPage() {
                         <motion.div
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          className="mt-8 rounded-3xl border border-emerald-500/30 bg-emerald-500/5 p-8 text-center"
+                          className="mt-8 rounded-3xl border border-brand/30 bg-brand/5 p-8 text-center"
                         >
-                           <Loader2 size={24} className="animate-spin text-emerald-500 mx-auto mb-4" />
-                           <p className="text-emerald-400 font-bold">Redirecting...</p>
+                           <Loader2 size={24} className="animate-spin text-brand mx-auto mb-4" />
+                           <p className="text-brand font-bold">Redirecting...</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -634,7 +592,7 @@ function PublicRegisterPage() {
                             onChange={(e) => setName(e.target.value)}
                             required
                             placeholder="e.g. Prestige Sunrise"
-                            className="w-full pl-11 pr-4 py-3.5 bg-[#111] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                            className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                           />
                         </div>
                       </div>
@@ -650,7 +608,7 @@ function PublicRegisterPage() {
                             onChange={(e) => setAddress(e.target.value)}
                             required
                             placeholder="e.g. Sector 12, Noida"
-                            className="w-full pl-11 pr-4 py-3.5 bg-[#111] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                            className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
                           />
                         </div>
                       </div>
@@ -668,7 +626,7 @@ function PublicRegisterPage() {
                           type="email"
                           required
                           placeholder="admin@society.com"
-                          className="w-full pl-11 pr-4 py-3.5 bg-[#111] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                          className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
                         />
                       </div>
                     </div>
@@ -677,7 +635,7 @@ function PublicRegisterPage() {
                       whileTap={{ scale: 0.98 }}
                       type="submit"
                       disabled={!name || !address || !adminEmail}
-                      className={`group w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4 bg-gradient-to-r ${selectedPlan?.gradient} text-white shadow-[0_0_30px_${selectedPlan?.glowColor}] hover:shadow-[0_0_50px_${selectedPlan?.glowColor}]`}
+                      className={`group w-full flex items-center justify-center gap-3 py-4 rounded-lg font-bold text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4 bg-brand text-white shadow-lg`}
                     >
                       Pay ₹{selectedPlan?.price.toLocaleString("en-IN")} & Launch
                       <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -701,7 +659,7 @@ function PublicRegisterPage() {
             exit={{ opacity: 0 }}
             className="flex min-h-[calc(100vh-65px)] items-center justify-center p-6"
           >
-            <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0a0a0a] p-8 shadow-2xl relative overflow-hidden">
+            <div className="w-full max-w-2xl rounded-3xl border border-gray-200 bg-white p-8 shadow-2xl relative overflow-hidden">
                {/* Decorative background */}
                <div className={`absolute top-0 left-0 right-0 h-32 bg-gradient-to-br ${selectedPlan?.gradient} opacity-20 blur-3xl pointer-events-none`} />
 
@@ -711,12 +669,12 @@ function PublicRegisterPage() {
                      <h2 className="text-3xl font-black mb-2 flex items-center gap-2">
                        <Sparkles className={selectedPlan?.textColor} /> Custom Branding
                      </h2>
-                     <p className="text-gray-400">Set up your premium society page colors and details.</p>
+                     <p className="text-gray-600">Set up your premium society page colors and details.</p>
                    </div>
                    <button
                      onClick={() => setStep("done")}
                      disabled={savingBranding}
-                     className="text-sm font-bold text-gray-500 hover:text-white transition-colors"
+                     className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
                    >
                      Skip for now
                    </button>
@@ -725,29 +683,29 @@ function PublicRegisterPage() {
                  <div className="space-y-6">
                    <div className="grid grid-cols-2 gap-4">
                      <div>
-                       <label className="block text-sm font-bold text-gray-400 mb-2">Tagline</label>
+                       <label className="block text-sm font-bold text-gray-600 mb-2">Tagline</label>
                        <input
                          value={brandingTagline}
                          onChange={(e) => setBrandingTagline(e.target.value)}
                          placeholder="A Premium Living Experience"
-                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition-colors"
+                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-violet-500 transition-colors"
                        />
                      </div>
                      <div>
-                       <label className="block text-sm font-bold text-gray-400 mb-2">Contact Phone</label>
+                       <label className="block text-sm font-bold text-gray-600 mb-2">Contact Phone</label>
                        <input
                          value={brandingPhone}
                          onChange={(e) => setBrandingPhone(e.target.value)}
                          placeholder="+91 98765 43210"
-                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition-colors"
+                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-violet-500 transition-colors"
                        />
                      </div>
                    </div>
 
                    <div className="grid grid-cols-2 gap-4">
                      <div>
-                       <label className="block text-sm font-bold text-gray-400 mb-2">Primary Color</label>
-                       <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+                       <label className="block text-sm font-bold text-gray-600 mb-2">Primary Color</label>
+                       <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2">
                          <input
                            type="color"
                            value={brandingPrimaryColor}
@@ -762,8 +720,8 @@ function PublicRegisterPage() {
                        </div>
                      </div>
                      <div>
-                       <label className="block text-sm font-bold text-gray-400 mb-2">Secondary Color</label>
-                       <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+                       <label className="block text-sm font-bold text-gray-600 mb-2">Secondary Color</label>
+                       <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2">
                          <input
                            type="color"
                            value={brandingSecondaryColor}
@@ -824,40 +782,40 @@ function PublicRegisterPage() {
                <div className="absolute top-[-50px] right-[-50px] w-32 h-32 bg-emerald-500/20 blur-3xl rounded-full" />
 
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg">
-                  <CheckCircle size={28} className="text-white" />
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-brand to-teal-500 flex items-center justify-center shadow-lg">
+                  <CheckCircle size={28} className="text-gray-900" />
                 </div>
                 <div>
-                  <p className="text-2xl font-black text-white">All Set! 🎉</p>
-                  <p className="text-emerald-400 font-medium">Your workspace is ready.</p>
+                  <p className="text-2xl font-black text-gray-900">All Set! 🎉</p>
+                  <p className="text-brand font-medium">Your workspace is ready.</p>
                 </div>
               </div>
 
-              <div className="bg-[#0a0a0a]/80 backdrop-blur-md rounded-2xl p-6 border border-white/10 space-y-5">
+              <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-gray-200 space-y-5">
                 <p className="text-xs font-black uppercase text-gray-500 tracking-widest flex items-center gap-2">
                   <ShieldCheck size={14} /> Admin Credentials
                 </p>
 
                 <div className="space-y-4">
                   <div>
-                    <span className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1 block">Manager Portal</span>
-                    <span className="text-sm font-mono text-emerald-300 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 break-all">
+                    <span className="text-xs text-gray-600 uppercase tracking-widest font-bold mb-1 block">Manager Portal</span>
+                    <span className="text-sm font-mono text-brand bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 break-all">
                       https://resident-nexus.com/{result.slug}/login
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1 block">Admin Email</span>
-                    <span className="text-sm font-mono text-white bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+                    <span className="text-xs text-gray-600 uppercase tracking-widest font-bold mb-1 block">Admin Email</span>
+                    <span className="text-sm font-mono text-gray-900 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
                       {result.email}
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1 block">Account Setup</span>
+                    <span className="text-xs text-gray-600 uppercase tracking-widest font-bold mb-1 block">Account Setup</span>
                     <div className="flex items-start gap-3 bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/20">
-                      <div className="mt-0.5"><ShieldCheck size={16} className="text-emerald-400" /></div>
-                      <p className="text-sm text-emerald-200">
+                      <div className="mt-0.5"><ShieldCheck size={16} className="text-brand" /></div>
+                      <p className="text-sm text-brand">
                         An invitation link has been sent to your email. Please check your inbox (and spam folder) to set your password.
                       </p>
                     </div>
@@ -867,7 +825,7 @@ function PublicRegisterPage() {
 
               <Link
                 to={`/${result.slug}/login`}
-                className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-4 text-sm font-bold text-black hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand py-4 text-sm font-bold text-white hover:bg-brand-hover transition-all shadow-[0_0_20px_rgba(0,102,204,0.2)]"
               >
                 Go to Login <ArrowRight size={16} />
               </Link>

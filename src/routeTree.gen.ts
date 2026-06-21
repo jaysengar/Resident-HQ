@@ -9,19 +9,60 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SecurityRouteImport } from './routes/security'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as MRouteImport } from './routes/m'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FeaturesRouteImport } from './routes/features'
+import { Route as AppLoginRouteImport } from './routes/app-login'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ColonySlugIndexRouteImport } from './routes/$colonySlug/index'
 import { Route as ColonySlugPublicRouteImport } from './routes/$colonySlug/public'
 import { Route as ColonySlugManagerRouteImport } from './routes/$colonySlug/manager'
 import { Route as ColonySlugLoginRouteImport } from './routes/$colonySlug/login'
 import { Route as ColonySlugGuardRouteImport } from './routes/$colonySlug/guard'
+import { Route as MResidentSosRouteImport } from './routes/m/resident/sos'
+import { Route as MResidentPreApproveRouteImport } from './routes/m/resident/pre-approve'
+import { Route as MResidentDashboardRouteImport } from './routes/m/resident/dashboard'
+import { Route as MResidentApprovalsRouteImport } from './routes/m/resident/approvals'
+import { Route as MGuardExpectedRouteImport } from './routes/m/guard/expected'
+import { Route as MGuardDashboardRouteImport } from './routes/m/guard/dashboard'
+import { Route as MGuardAddVisitorRouteImport } from './routes/m/guard/add-visitor'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MRoute = MRouteImport.update({
+  id: '/m',
+  path: '/m',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -29,9 +70,29 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeaturesRoute = FeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppLoginRoute = AppLoginRouteImport.update({
+  id: '/app-login',
+  path: '/app-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -64,82 +125,222 @@ const ColonySlugGuardRoute = ColonySlugGuardRouteImport.update({
   path: '/$colonySlug/guard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MResidentSosRoute = MResidentSosRouteImport.update({
+  id: '/resident/sos',
+  path: '/resident/sos',
+  getParentRoute: () => MRoute,
+} as any)
+const MResidentPreApproveRoute = MResidentPreApproveRouteImport.update({
+  id: '/resident/pre-approve',
+  path: '/resident/pre-approve',
+  getParentRoute: () => MRoute,
+} as any)
+const MResidentDashboardRoute = MResidentDashboardRouteImport.update({
+  id: '/resident/dashboard',
+  path: '/resident/dashboard',
+  getParentRoute: () => MRoute,
+} as any)
+const MResidentApprovalsRoute = MResidentApprovalsRouteImport.update({
+  id: '/resident/approvals',
+  path: '/resident/approvals',
+  getParentRoute: () => MRoute,
+} as any)
+const MGuardExpectedRoute = MGuardExpectedRouteImport.update({
+  id: '/guard/expected',
+  path: '/guard/expected',
+  getParentRoute: () => MRoute,
+} as any)
+const MGuardDashboardRoute = MGuardDashboardRouteImport.update({
+  id: '/guard/dashboard',
+  path: '/guard/dashboard',
+  getParentRoute: () => MRoute,
+} as any)
+const MGuardAddVisitorRoute = MGuardAddVisitorRouteImport.update({
+  id: '/guard/add-visitor',
+  path: '/guard/add-visitor',
+  getParentRoute: () => MRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/app': typeof AppRoute
+  '/app-login': typeof AppLoginRoute
+  '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
+  '/m': typeof MRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
+  '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/$colonySlug/guard': typeof ColonySlugGuardRoute
   '/$colonySlug/login': typeof ColonySlugLoginRoute
   '/$colonySlug/manager': typeof ColonySlugManagerRoute
   '/$colonySlug/public': typeof ColonySlugPublicRoute
   '/$colonySlug/': typeof ColonySlugIndexRoute
+  '/m/guard/add-visitor': typeof MGuardAddVisitorRoute
+  '/m/guard/dashboard': typeof MGuardDashboardRoute
+  '/m/guard/expected': typeof MGuardExpectedRoute
+  '/m/resident/approvals': typeof MResidentApprovalsRoute
+  '/m/resident/dashboard': typeof MResidentDashboardRoute
+  '/m/resident/pre-approve': typeof MResidentPreApproveRoute
+  '/m/resident/sos': typeof MResidentSosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/app': typeof AppRoute
+  '/app-login': typeof AppLoginRoute
+  '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
+  '/m': typeof MRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
+  '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/$colonySlug/guard': typeof ColonySlugGuardRoute
   '/$colonySlug/login': typeof ColonySlugLoginRoute
   '/$colonySlug/manager': typeof ColonySlugManagerRoute
   '/$colonySlug/public': typeof ColonySlugPublicRoute
   '/$colonySlug': typeof ColonySlugIndexRoute
+  '/m/guard/add-visitor': typeof MGuardAddVisitorRoute
+  '/m/guard/dashboard': typeof MGuardDashboardRoute
+  '/m/guard/expected': typeof MGuardExpectedRoute
+  '/m/resident/approvals': typeof MResidentApprovalsRoute
+  '/m/resident/dashboard': typeof MResidentDashboardRoute
+  '/m/resident/pre-approve': typeof MResidentPreApproveRoute
+  '/m/resident/sos': typeof MResidentSosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/app': typeof AppRoute
+  '/app-login': typeof AppLoginRoute
+  '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
+  '/m': typeof MRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
+  '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/$colonySlug/guard': typeof ColonySlugGuardRoute
   '/$colonySlug/login': typeof ColonySlugLoginRoute
   '/$colonySlug/manager': typeof ColonySlugManagerRoute
   '/$colonySlug/public': typeof ColonySlugPublicRoute
   '/$colonySlug/': typeof ColonySlugIndexRoute
+  '/m/guard/add-visitor': typeof MGuardAddVisitorRoute
+  '/m/guard/dashboard': typeof MGuardDashboardRoute
+  '/m/guard/expected': typeof MGuardExpectedRoute
+  '/m/resident/approvals': typeof MResidentApprovalsRoute
+  '/m/resident/dashboard': typeof MResidentDashboardRoute
+  '/m/resident/pre-approve': typeof MResidentPreApproveRoute
+  '/m/resident/sos': typeof MResidentSosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/admin'
+    | '/app'
+    | '/app-login'
+    | '/features'
     | '/login'
+    | '/m'
+    | '/pricing'
+    | '/privacy'
     | '/register'
+    | '/security'
+    | '/terms'
     | '/$colonySlug/guard'
     | '/$colonySlug/login'
     | '/$colonySlug/manager'
     | '/$colonySlug/public'
     | '/$colonySlug/'
+    | '/m/guard/add-visitor'
+    | '/m/guard/dashboard'
+    | '/m/guard/expected'
+    | '/m/resident/approvals'
+    | '/m/resident/dashboard'
+    | '/m/resident/pre-approve'
+    | '/m/resident/sos'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/admin'
+    | '/app'
+    | '/app-login'
+    | '/features'
     | '/login'
+    | '/m'
+    | '/pricing'
+    | '/privacy'
     | '/register'
+    | '/security'
+    | '/terms'
     | '/$colonySlug/guard'
     | '/$colonySlug/login'
     | '/$colonySlug/manager'
     | '/$colonySlug/public'
     | '/$colonySlug'
+    | '/m/guard/add-visitor'
+    | '/m/guard/dashboard'
+    | '/m/guard/expected'
+    | '/m/resident/approvals'
+    | '/m/resident/dashboard'
+    | '/m/resident/pre-approve'
+    | '/m/resident/sos'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/admin'
+    | '/app'
+    | '/app-login'
+    | '/features'
     | '/login'
+    | '/m'
+    | '/pricing'
+    | '/privacy'
     | '/register'
+    | '/security'
+    | '/terms'
     | '/$colonySlug/guard'
     | '/$colonySlug/login'
     | '/$colonySlug/manager'
     | '/$colonySlug/public'
     | '/$colonySlug/'
+    | '/m/guard/add-visitor'
+    | '/m/guard/dashboard'
+    | '/m/guard/expected'
+    | '/m/resident/approvals'
+    | '/m/resident/dashboard'
+    | '/m/resident/pre-approve'
+    | '/m/resident/sos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
+  AppRoute: typeof AppRoute
+  AppLoginRoute: typeof AppLoginRoute
+  FeaturesRoute: typeof FeaturesRoute
   LoginRoute: typeof LoginRoute
+  MRoute: typeof MRouteWithChildren
+  PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   RegisterRoute: typeof RegisterRoute
+  SecurityRoute: typeof SecurityRoute
+  TermsRoute: typeof TermsRoute
   ColonySlugGuardRoute: typeof ColonySlugGuardRoute
   ColonySlugLoginRoute: typeof ColonySlugLoginRoute
   ColonySlugManagerRoute: typeof ColonySlugManagerRoute
@@ -149,11 +350,46 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/m': {
+      id: '/m'
+      path: '/m'
+      fullPath: '/m'
+      preLoaderRoute: typeof MRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -163,11 +399,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/features': {
+      id: '/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof FeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app-login': {
+      id: '/app-login'
+      path: '/app-login'
+      fullPath: '/app-login'
+      preLoaderRoute: typeof AppLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -212,14 +476,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ColonySlugGuardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/m/resident/sos': {
+      id: '/m/resident/sos'
+      path: '/resident/sos'
+      fullPath: '/m/resident/sos'
+      preLoaderRoute: typeof MResidentSosRouteImport
+      parentRoute: typeof MRoute
+    }
+    '/m/resident/pre-approve': {
+      id: '/m/resident/pre-approve'
+      path: '/resident/pre-approve'
+      fullPath: '/m/resident/pre-approve'
+      preLoaderRoute: typeof MResidentPreApproveRouteImport
+      parentRoute: typeof MRoute
+    }
+    '/m/resident/dashboard': {
+      id: '/m/resident/dashboard'
+      path: '/resident/dashboard'
+      fullPath: '/m/resident/dashboard'
+      preLoaderRoute: typeof MResidentDashboardRouteImport
+      parentRoute: typeof MRoute
+    }
+    '/m/resident/approvals': {
+      id: '/m/resident/approvals'
+      path: '/resident/approvals'
+      fullPath: '/m/resident/approvals'
+      preLoaderRoute: typeof MResidentApprovalsRouteImport
+      parentRoute: typeof MRoute
+    }
+    '/m/guard/expected': {
+      id: '/m/guard/expected'
+      path: '/guard/expected'
+      fullPath: '/m/guard/expected'
+      preLoaderRoute: typeof MGuardExpectedRouteImport
+      parentRoute: typeof MRoute
+    }
+    '/m/guard/dashboard': {
+      id: '/m/guard/dashboard'
+      path: '/guard/dashboard'
+      fullPath: '/m/guard/dashboard'
+      preLoaderRoute: typeof MGuardDashboardRouteImport
+      parentRoute: typeof MRoute
+    }
+    '/m/guard/add-visitor': {
+      id: '/m/guard/add-visitor'
+      path: '/guard/add-visitor'
+      fullPath: '/m/guard/add-visitor'
+      preLoaderRoute: typeof MGuardAddVisitorRouteImport
+      parentRoute: typeof MRoute
+    }
   }
 }
 
+interface MRouteChildren {
+  MGuardAddVisitorRoute: typeof MGuardAddVisitorRoute
+  MGuardDashboardRoute: typeof MGuardDashboardRoute
+  MGuardExpectedRoute: typeof MGuardExpectedRoute
+  MResidentApprovalsRoute: typeof MResidentApprovalsRoute
+  MResidentDashboardRoute: typeof MResidentDashboardRoute
+  MResidentPreApproveRoute: typeof MResidentPreApproveRoute
+  MResidentSosRoute: typeof MResidentSosRoute
+}
+
+const MRouteChildren: MRouteChildren = {
+  MGuardAddVisitorRoute: MGuardAddVisitorRoute,
+  MGuardDashboardRoute: MGuardDashboardRoute,
+  MGuardExpectedRoute: MGuardExpectedRoute,
+  MResidentApprovalsRoute: MResidentApprovalsRoute,
+  MResidentDashboardRoute: MResidentDashboardRoute,
+  MResidentPreApproveRoute: MResidentPreApproveRoute,
+  MResidentSosRoute: MResidentSosRoute,
+}
+
+const MRouteWithChildren = MRoute._addFileChildren(MRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
+  AppRoute: AppRoute,
+  AppLoginRoute: AppLoginRoute,
+  FeaturesRoute: FeaturesRoute,
   LoginRoute: LoginRoute,
+  MRoute: MRouteWithChildren,
+  PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   RegisterRoute: RegisterRoute,
+  SecurityRoute: SecurityRoute,
+  TermsRoute: TermsRoute,
   ColonySlugGuardRoute: ColonySlugGuardRoute,
   ColonySlugLoginRoute: ColonySlugLoginRoute,
   ColonySlugManagerRoute: ColonySlugManagerRoute,
