@@ -613,6 +613,17 @@ export const serverGetSocietiesWithStats = createServerFn({ method: "POST" }).in
       revenuePerSociety[p.society_id] += Number(p.amount);
     });
 
+    const { data: managers, error: managersError } = await admin
+      .from("users")
+      .select("society_id, email")
+      .eq("role", "manager");
+
+    const managerEmails: Record<string, string> = {};
+    managers?.forEach(m => {
+      // Only keep the first manager's email if there are multiple
+      if (!managerEmails[m.society_id]) managerEmails[m.society_id] = m.email;
+    });
+
     const residentCounts: Record<string, number> = {};
     users?.forEach(u => {
       if (!residentCounts[u.society_id]) residentCounts[u.society_id] = 0;
@@ -625,7 +636,7 @@ export const serverGetSocietiesWithStats = createServerFn({ method: "POST" }).in
       address: s.address || "",
       totalFlats: s.max_flats,
       billAmount: s.bill_amount || 2500,
-      adminEmail: "Admin Managed",
+      adminEmail: managerEmails[s.id] || "No Manager",
       subscriptionPlan: s.plan,
       status: s.status as "active" | "suspended",
       createdAt: s.created_at,
