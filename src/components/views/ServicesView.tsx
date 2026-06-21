@@ -166,7 +166,8 @@ export function ServicesView() {
                     </div>
                     <span className="text-xs font-medium text-foreground">{c.label}</span>
                   </motion.button>
-                ))
+                  ))}
+                </>
               )}
             </div>
           </motion.section>
