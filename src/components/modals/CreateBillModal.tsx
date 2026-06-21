@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileDown, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -8,10 +8,12 @@ export function CreateBillModal({
   open,
   onClose,
   onSuccess,
+  defaultFlatNo,
 }: {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  defaultFlatNo?: string;
 }) {
   const [title, setTitle] = useState("Monthly Maintenance");
   const [amount, setAmount] = useState(2500);
@@ -20,9 +22,18 @@ export function CreateBillModal({
     d.setDate(d.getDate() + 15);
     return d.toISOString().split("T")[0];
   });
-  const [billType, setBillType] = useState<"bulk" | "specific">("bulk");
-  const [flatNumber, setFlatNumber] = useState("");
+  const [billType, setBillType] = useState<"bulk" | "specific">(defaultFlatNo ? "specific" : "bulk");
+  const [flatNumber, setFlatNumber] = useState(defaultFlatNo || "");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setBillType(defaultFlatNo ? "specific" : "bulk");
+      setFlatNumber(defaultFlatNo || "");
+      setTitle(""); // Let manager type reason easily
+      setAmount(0); // Let manager type amount easily
+    }
+  }, [open, defaultFlatNo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

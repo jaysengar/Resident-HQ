@@ -4,12 +4,15 @@ import { Search, Send, Loader2, Phone, Mail, Trash2 } from "lucide-react";
 import { useManager } from "@/context/ManagerContext";
 
 import { AddResidentModal } from "../modals/AddResidentModal";
+import { CreateBillModal } from "../modals/CreateBillModal";
 
 export function ResidentsTable() {
   const { residents, loading, fetchResidents, handleSendReminder, handleDeleteResident } = useManager();
   const [search, setSearch] = useState("");
   const [sendingFlat, setSendingFlat] = useState<string | null>(null);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
+  const [isBillModalOpen, setBillModalOpen] = useState(false);
+  const [selectedBillFlat, setSelectedBillFlat] = useState<string>("");
 
   useEffect(() => {
     fetchResidents();
@@ -28,12 +31,12 @@ export function ResidentsTable() {
   };
 
   const statusBadge = (status: string) => {
-    switch (status) {
-      case "Paid":
+    switch (status?.toLowerCase()) {
+      case "paid":
         return "bg-success/10 text-success";
-      case "Unpaid":
+      case "unpaid":
         return "bg-destructive/10 text-destructive";
-      case "Partial":
+      case "partial":
         return "bg-amber-100 text-amber-700";
       default:
         return "bg-secondary text-muted-foreground";
@@ -56,6 +59,12 @@ export function ResidentsTable() {
         </button>
       </div>
       <AddResidentModal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} />
+      <CreateBillModal
+        open={isBillModalOpen}
+        onClose={() => setBillModalOpen(false)}
+        onSuccess={() => fetchResidents()}
+        defaultFlatNo={selectedBillFlat}
+      />
 
       {/* Search */}
       <div
@@ -139,9 +148,9 @@ export function ResidentsTable() {
                       <span
                         className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusBadge(r.duesStatus)}`}
                       >
-                        {r.duesStatus === "Paid"
+                        {r.duesStatus?.toLowerCase() === "paid"
                           ? "✅ Paid"
-                          : r.duesStatus === "Partial"
+                          : r.duesStatus?.toLowerCase() === "partial"
                             ? "⚠️ Partial"
                             : "🔴 Unpaid"}
                       </span>
@@ -165,6 +174,16 @@ export function ResidentsTable() {
                         ) : (
                           <span className="text-[11px] text-muted-foreground mr-2">No action</span>
                         )}
+                        <motion.button
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setSelectedBillFlat(r.flatNo);
+                            setBillModalOpen(true);
+                          }}
+                          className="flex items-center gap-1.5 rounded-lg border border-border/60 bg-secondary px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-secondary/80 transition-colors"
+                        >
+                          Send Bill
+                        </motion.button>
                         <button 
                           onClick={() => {
                             if (window.confirm(`Are you sure you want to remove ${r.name} from flat ${r.flatNo}?`)) {
