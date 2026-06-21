@@ -54,6 +54,7 @@ export async function createTicket(
       description: payload.description,
       category: payload.category,
       priority: payload.priority,
+      status: "Open"
     })
     .select()
     .single();

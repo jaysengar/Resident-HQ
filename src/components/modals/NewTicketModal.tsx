@@ -17,7 +17,6 @@ export function NewTicketModal({ open, onClose }: { open: boolean; onClose: () =
       return;
     }
     addTicket({ title: category, category, description });
-    toast.success("Ticket raised", { description: `${category} request submitted` });
     setDescription("");
     setCategory(CATEGORIES[0]);
     onClose();

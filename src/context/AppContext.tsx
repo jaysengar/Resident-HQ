@@ -289,8 +289,9 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
 
       toast.success("Ticket raised successfully");
       refreshAll();
-    } catch {
-      toast.error("Failed to raise ticket");
+    } catch (err: any) {
+      console.error("Failed to raise ticket:", err);
+      toast.error(err.message || "Failed to raise ticket");
     }
   };
 
