@@ -71,7 +71,6 @@ export function HomeView() {
           avatar={currentUser.name[0]}
           subtitle={getGreeting()}
           title={`Hello, ${currentUser.name}`}
-          onBellClick={() => setNoticesOpen(true)}
         />
 
       <motion.div
