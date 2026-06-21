@@ -33,35 +33,54 @@ export function CustomSplashScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.05 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="fixed inset-0 z-[9999] bg-[#0d1b2a] flex items-center justify-center overflow-hidden"
-          style={{
-            backgroundImage: "url('/textures/splash.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
+          className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-between overflow-hidden"
         >
-          {/* Subtle dark overlay for contrast */}
-          <div className="absolute inset-0 bg-black/40" />
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 z-0"
+            style={{
+              backgroundImage: "url('/textures/building-splash.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          
+          {/* Subtle dark gradient overlays for cinematic effect */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/20 via-black/10 to-black/90" />
+          <div className="absolute inset-0 z-0 bg-black/40" />
 
-          {/* Frosted glass R logo container */}
+          {/* Top spacer */}
+          <div className="relative z-10 w-full h-32" />
+
+          {/* Center Text (Different from logo) */}
           <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 1, type: "spring" }}
-            className="relative z-10 w-32 h-32 rounded-[2rem] bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl flex items-center justify-center"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 1.2, ease: "easeOut" }}
+            className="relative z-10 flex flex-col items-center gap-4"
           >
-            <div className="text-6xl font-bold bg-gradient-to-br from-cyan-300 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">
-              R
-            </div>
+            <h1 className="text-5xl font-extrabold tracking-tighter text-white drop-shadow-2xl">
+              Resident HQ
+            </h1>
+            <div className="w-12 h-1 bg-primary/80 rounded-full" />
+            <p className="text-white/70 text-sm tracking-widest uppercase font-semibold">
+              Smart Society
+            </p>
           </motion.div>
           
+          {/* Bottom Branding */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 1 }}
-            className="absolute bottom-12 text-white/60 text-sm tracking-[0.2em] uppercase"
+            transition={{ delay: 1.2, duration: 1 }}
+            className="relative z-10 pb-12 flex flex-col items-center gap-2"
           >
-            ResidentHQ
+            <p className="text-white/40 text-xs tracking-widest uppercase">
+              From
+            </p>
+            <p className="text-white/90 text-sm tracking-[0.2em] uppercase font-bold">
+              CodeWave Systems
+            </p>
           </motion.div>
         </motion.div>
       )}
