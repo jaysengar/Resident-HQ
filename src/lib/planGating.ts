@@ -10,6 +10,7 @@ export type FeatureId =
   | "notices"
   | "dues"
   | "helpdesk"
+  | "messages"
   | "marketplace"
   | "settings"
   | "branding"
@@ -44,6 +45,7 @@ export const FEATURE_REGISTRY: FeatureMeta[] = [
   // Pro features
   { id: "dues", label: "Dues Collection", description: "Online payment collection with Razorpay", requiredPlan: "pro" },
   { id: "helpdesk", label: "Helpdesk Tickets", description: "Resident complaint & issue tracking", requiredPlan: "pro" },
+  { id: "messages", label: "Direct Messaging", description: "1-on-1 chat with residents", requiredPlan: "pro" },
   { id: "marketplace", label: "Community Hub", description: "Buy/Sell marketplace & resident feed", requiredPlan: "pro" },
   { id: "branding", label: "Custom Branding", description: "Logo, colors, and branded colony page", requiredPlan: "pro" },
 

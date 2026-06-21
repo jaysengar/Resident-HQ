@@ -48,7 +48,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "guards", label: "Security Guards", icon: User, featureId: "guards" },
   { id: "dues", label: "Dues Collection", icon: Wallet, featureId: "dues" },
   { id: "helpdesk", label: "Helpdesk Tickets", icon: LifeBuoy, featureId: "helpdesk" },
-  { id: "messages", label: "Messages", icon: MessageSquare },
+  { id: "messages", label: "Messages", icon: MessageSquare, featureId: "messages" },
   { id: "branding", label: "Branding", icon: Palette, featureId: "branding" },
   { id: "settings", label: "Settings", icon: Settings, featureId: "settings" },
 ];

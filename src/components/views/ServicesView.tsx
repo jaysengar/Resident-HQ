@@ -16,6 +16,7 @@ import {
   Download
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 import { useApp } from "@/context/AppContext";
 import { TopHeader, SectionTitle } from "@/components/layout/TopHeader";
 import { TicketCard } from "@/components/cards/TicketCard";
@@ -27,6 +28,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 
 export function ServicesView() {
+  const { user } = useAuth();
   const { currentUser, activeTickets, documents, fetchInitialData } = useApp();
   const [seg, setSeg] = useState<"helpdesk" | "directory" | "documents">("helpdesk");
   const [ticketOpen, setTicketOpen] = useState(false);
@@ -139,14 +141,34 @@ export function ServicesView() {
                     <motion.button
                       whileTap={{ scale: 0.95 }}
                       whileHover={{ y: -2 }}
-                      onClick={() => setMsgOpen(true)}
-                      className="flex flex-col items-center gap-2 rounded-2xl border border-primary/30 bg-primary/10 p-3"
+                      onClick={() => {
+                        if (user?.subscriptionPlan === "Basic") {
+                          toast.error("Locked Feature", {
+                            description: "Manager Chat is not available on the Basic (5k) plan. Society needs to upgrade.",
+                          });
+                          return;
+                        }
+                        setMsgOpen(true);
+                      }}
+                      className={`flex flex-col items-center gap-2 rounded-2xl border p-3 ${
+                        user?.subscriptionPlan === "Basic" 
+                          ? "border-muted/30 bg-muted/10 opacity-75" 
+                          : "border-primary/30 bg-primary/10"
+                      }`}
                       style={{ boxShadow: "var(--shadow-soft)" }}
                     >
-                      <div className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground">
+                      <div className={`grid h-12 w-12 place-items-center rounded-xl ${
+                        user?.subscriptionPlan === "Basic"
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-primary text-primary-foreground"
+                      }`}>
                         <Users size={22} />
                       </div>
-                      <span className="text-xs font-semibold text-primary">Message Manager</span>
+                      <span className={`text-xs font-semibold ${
+                        user?.subscriptionPlan === "Basic" ? "text-muted-foreground" : "text-primary"
+                      }`}>
+                        {user?.subscriptionPlan === "Basic" ? "Chat (Locked)" : "Message Manager"}
+                      </span>
                     </motion.button>
                   )}
                   {list.map((c) => (

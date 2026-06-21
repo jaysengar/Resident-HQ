@@ -13,6 +13,7 @@ export interface AuthUser {
   societySlug?: string;
   societyName?: string;
   societyAddress?: string;
+  subscriptionPlan?: "Basic" | "Pro" | "Enterprise";
   flat?: string;
   avatar?: string;
 }
