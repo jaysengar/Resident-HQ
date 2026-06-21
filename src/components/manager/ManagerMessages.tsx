@@ -8,6 +8,7 @@ export function ManagerMessages() {
   const { user } = useAuth();
   const [conversations, setConversations] = useState<ManagerConversation[]>([]);
   const [activeFlat, setActiveFlat] = useState<string | null>(null);
+  const activeFlatRef = useRef<string | null>(null);
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [loadingConv, setLoadingConv] = useState(true);
   const [loadingMsgs, setLoadingMsgs] = useState(false);
@@ -50,18 +51,15 @@ export function ManagerMessages() {
               const newMsg = payload.new as DirectMessage;
               
               // If it's for the currently active chat, append it
-              setActiveFlat((currentActiveFlat) => {
-                if (currentActiveFlat === newMsg.flat_number) {
-                  setMessages((prev) => {
-                    // Check to avoid duplicates (if we sent it)
-                    if (prev.find(m => m.id === newMsg.id)) return prev;
-                    const next = [...prev, newMsg];
-                    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-                    return next;
-                  });
-                }
-                return currentActiveFlat;
-              });
+              if (activeFlatRef.current === newMsg.flat_number) {
+                setMessages((prev) => {
+                  // Check to avoid duplicates (if we sent it)
+                  if (prev.find(m => m.id === newMsg.id)) return prev;
+                  const next = [...prev, newMsg];
+                  setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+                  return next;
+                });
+              }
               
               // Update conversation list
               setConversations((prev) => {
@@ -87,6 +85,7 @@ export function ManagerMessages() {
 
   // Fetch messages for the selected flat
   useEffect(() => {
+    activeFlatRef.current = activeFlat;
     if (!activeFlat) return;
     
     const fetchMessages = async () => {
