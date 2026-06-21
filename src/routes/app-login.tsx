@@ -10,11 +10,16 @@ export const Route = createFileRoute("/app-login")({
   beforeLoad: async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      const { data: user } = await supabase.from("users").select("role").eq("id", session.user.id).single();
+      const { data: user } = await supabase.from("users").select("role, societies(slug)").eq("id", session.user.id).single();
+      const slug = (user as any)?.societies?.slug || "demo";
       if (user?.role === "guard") {
-        throw redirect({ to: "/m/guard/dashboard" });
+        throw redirect({ to: `/${slug}/guard` });
+      } else if (user?.role === "manager") {
+        throw redirect({ to: `/${slug}/manager` });
+      } else if (user?.role === "admin") {
+        throw redirect({ to: `/admin` });
       } else {
-        throw redirect({ to: "/m/resident/dashboard" });
+        throw redirect({ to: `/${slug}/dashboard` });
       }
     }
   },
@@ -42,22 +47,31 @@ function MobileLogin() {
       
       // Request push notification permissions and register token
       if (data.user) {
-        await registerForPushNotifications(data.user.id);
+        try {
+          await registerForPushNotifications(data.user.id);
+        } catch (e) {
+          console.error("Push registration failed", e);
+        }
 
-        // Fetch user role to determine redirect path
+        // Fetch user role and society slug to determine redirect path
         const { data: profile } = await supabase
           .from("users")
-          .select("role")
+          .select("role, societies(slug)")
           .eq("id", data.user.id)
           .single();
 
+        const slug = (profile as any)?.societies?.slug || "demo";
         toast.success("Successfully logged in");
 
         setTimeout(() => {
           if (profile?.role === "guard") {
-            navigate({ to: "/m/guard/dashboard" });
+            navigate({ to: `/${slug}/guard` });
+          } else if (profile?.role === "manager") {
+            navigate({ to: `/${slug}/manager` });
+          } else if (profile?.role === "admin") {
+            navigate({ to: `/admin` });
           } else {
-            navigate({ to: "/m/resident/dashboard" });
+            navigate({ to: `/${slug}/dashboard` });
           }
         }, 500);
         return;
@@ -65,7 +79,7 @@ function MobileLogin() {
 
       toast.success("Successfully logged in");
       setTimeout(() => {
-        navigate({ to: "/m/resident/dashboard" });
+        navigate({ to: "/demo/dashboard" });
       }, 500);
     } catch (err: any) {
       toast.error(err.message || "Invalid credentials");

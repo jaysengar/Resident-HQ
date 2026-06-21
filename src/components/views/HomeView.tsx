@@ -65,7 +65,7 @@ export function HomeView() {
   const pending = gateAlerts.filter((a) => a.status === "pending");
 
   return (
-    <div className="bg-[#f0f4f8] min-h-[100dvh] text-gray-900 pb-8">
+    <div className="dark min-h-[100dvh] bg-black text-foreground pb-8 selection:bg-brand/30">
       <div className="px-5 pt-2">
         <TopHeader
           avatar={currentUser.name[0]}
@@ -78,35 +78,35 @@ export function HomeView() {
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.05 }}
-        className="mt-6 rounded-[28px] bg-white p-6 border border-gray-200 shadow-sm relative overflow-hidden"
+        className="mt-6 rounded-[28px] bg-zinc-900/60 backdrop-blur-xl p-6 border border-white/10 shadow-[0_0_40px_-10px_rgba(0,0,0,0.5)] relative overflow-hidden"
       >
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
             <ShieldCheck size={14} />
             <span>Verified</span>
           </div>
-          <p className="text-sm font-medium text-gray-500">Flat {currentUser.flat}</p>
+          <p className="text-sm font-medium text-foreground/60">Flat {currentUser.flat}</p>
         </div>
         <div className="mt-2 flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">{currentUser.occupancyType}</span>
-          <span className="w-1 h-1 rounded-full bg-gray-300" />
-          <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">{currentUser.flatType}</span>
+          <span className="text-[11px] font-semibold text-foreground/50 uppercase tracking-wide">{currentUser.occupancyType}</span>
+          <span className="w-1 h-1 rounded-full bg-white/20" />
+          <span className="text-[11px] font-semibold text-foreground/50 uppercase tracking-wide">{currentUser.flatType}</span>
         </div>
 
-        <div className="mt-6 flex flex-col gap-3 bg-gray-50 rounded-[20px] p-5 border border-gray-100">
+        <div className="mt-6 flex flex-col gap-3 bg-black/40 rounded-[20px] p-5 border border-white/5">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Name</span>
-            <span className="text-xs font-semibold text-gray-900">{currentUser.name}</span>
+            <span className="text-[10px] text-foreground/50 uppercase font-bold tracking-widest">Name</span>
+            <span className="text-xs font-semibold text-foreground/90">{currentUser.name}</span>
           </div>
-          <div className="w-full h-px bg-gray-200" />
+          <div className="w-full h-px bg-white/10" />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Email</span>
-            <span className="text-xs font-semibold text-gray-800">{currentUser.email || "resident@residenthq.app"}</span>
+            <span className="text-[10px] text-foreground/50 uppercase font-bold tracking-widest">Email</span>
+            <span className="text-xs font-semibold text-foreground/80">{currentUser.email || "resident@residenthq.app"}</span>
           </div>
-          <div className="w-full h-px bg-gray-200" />
+          <div className="w-full h-px bg-white/10" />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Phone</span>
-            <span className="text-xs font-semibold text-gray-800">{currentUser.phone || "N/A"}</span>
+            <span className="text-[10px] text-foreground/50 uppercase font-bold tracking-widest">Phone</span>
+            <span className="text-xs font-semibold text-foreground/80">{currentUser.phone || "N/A"}</span>
           </div>
         </div>
       </motion.div>
@@ -125,11 +125,12 @@ export function HomeView() {
               className="group flex flex-col items-center gap-3"
             >
               <div
-                className="grid h-[60px] w-[60px] place-items-center rounded-2xl bg-white text-gray-900 group-hover:bg-gray-50 transition-all duration-300 border border-gray-200 shadow-sm relative overflow-hidden"
+                className={`grid h-[60px] w-[60px] place-items-center rounded-2xl bg-gradient-to-br ${a.tint} text-white shadow-lg transition-transform duration-300 group-hover:shadow-xl group-hover:scale-105 relative overflow-hidden`}
               >
-                <a.icon size={24} strokeWidth={1.5} className="relative z-10 text-brand group-hover:scale-110 transition-transform" />
+                <div className="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100" />
+                <a.icon size={24} strokeWidth={2} className="relative z-10 drop-shadow-sm" />
               </div>
-              <span className="text-[11px] font-bold tracking-wide text-gray-600 text-center leading-tight">
+              <span className="text-[11px] font-bold tracking-wide text-foreground/70 text-center leading-tight">
                 {a.label}
               </span>
             </motion.button>
@@ -152,13 +153,13 @@ export function HomeView() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="rounded-[20px] border border-gray-200 bg-white p-6 flex flex-col items-center justify-center text-center shadow-sm"
+                  className="rounded-[20px] border border-white/10 bg-zinc-900/60 p-6 flex flex-col items-center justify-center text-center shadow-sm"
                 >
-                  <div className="h-10 w-10 rounded-full bg-gray-50 flex items-center justify-center mb-3 border border-gray-100">
-                    <ShieldCheck size={20} className="text-gray-400" />
+                  <div className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center mb-3 border border-white/10">
+                    <ShieldCheck size={20} className="text-white/40" />
                   </div>
-                  <p className="text-sm font-medium text-gray-900">No pending alerts</p>
-                  <p className="text-[11px] text-gray-500 mt-1">You're all caught up.</p>
+                  <p className="text-sm font-medium text-foreground/90">No pending alerts</p>
+                  <p className="text-[11px] text-foreground/50 mt-1">You're all caught up.</p>
                 </motion.div>
               ) : (
                 gateAlerts.map((a) => <GateAlertCard key={a.id} alert={a} />)
@@ -168,33 +169,7 @@ export function HomeView() {
         </div>
       </section>
 
-      <section className="mt-8 mb-6">
-        <SectionTitle
-          title="Notice Board"
-          action={announcements.length > 5 ? "View all" : undefined}
-          onAction={() => setNoticesOpen(true)}
-        />
-        <div className="mt-4 space-y-3">
-          {!dataReady ? (
-            // Loading skeletons
-            <>
-              <SkeletonCard lines={3} />
-              <SkeletonCard lines={2} />
-              <SkeletonCard lines={3} />
-            </>
-          ) : announcements.length === 0 ? (
-            <EmptyState
-              icon={Bell}
-              title="No announcements yet"
-              description="You'll see notices from your society management here."
-            />
-          ) : (
-            announcements.slice(0, 5).map((n) => (
-              <NoticeCard key={n.id} title={n.title} body={n.body} time={n.time} />
-            ))
-          )}
-        </div>
-      </section>
+
       
       </div>
 

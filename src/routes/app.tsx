@@ -19,8 +19,6 @@ export const Route = createFileRoute("/app")({
       } else {
         throw redirect({ to: `/${slug}/dashboard` });
       }
-    } else {
-      throw redirect({ to: "/login" });
     }
   },
   component: MobileAppLanding,

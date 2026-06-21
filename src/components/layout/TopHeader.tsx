@@ -36,12 +36,18 @@ export function TopHeader({
           </div>
         </div>
         <motion.button
-          onClick={() => setNotifOpen(true)}
+          onClick={() => {
+            if (onBellClick) {
+              onBellClick();
+            } else {
+              setNotifOpen(true);
+            }
+          }}
           whileTap={{ scale: 0.9 }}
-          className="relative grid h-11 w-11 place-items-center rounded-full bg-secondary text-foreground hover:bg-secondary/80 transition-colors"
+          className="relative grid h-11 w-11 place-items-center rounded-full bg-secondary text-foreground hover:bg-secondary/80 transition-colors border border-white/5"
         >
-          <Bell size={20} />
-          {unreadCount > 0 && (
+          <Bell size={20} className="text-white/80" />
+          {unreadCount > 0 && !onBellClick && (
             <span className="absolute top-2 right-2.5 flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-destructive ring-2 ring-background" />
@@ -50,11 +56,13 @@ export function TopHeader({
         </motion.button>
       </header>
 
-      <NotificationPanel
-        open={notifOpen}
-        onClose={() => setNotifOpen(false)}
-        onUnreadCountChange={setUnreadCount}
-      />
+      {!onBellClick && (
+        <NotificationPanel
+          open={notifOpen}
+          onClose={() => setNotifOpen(false)}
+          onUnreadCountChange={setUnreadCount}
+        />
+      )}
     </>
   );
 }
