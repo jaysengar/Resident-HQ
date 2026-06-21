@@ -63,15 +63,15 @@ export function ServicesView() {
 
   const helpdesk = categories
     .filter(c => c.type === "helpdesk")
-    .map(c => ({ label: c.label, icon: iconsMap[c.icon_name] || Wrench, color: c.color_class }));
+    .map(c => ({ label: c.label || c.name, icon: iconsMap[c.icon_name || c.icon] || Wrench, color: c.color_class || c.color }));
 
   const directory = categories
     .filter(c => c.type === "directory")
-    .map(c => ({ label: c.label, icon: iconsMap[c.icon_name] || Users, color: c.color_class }));
+    .map(c => ({ label: c.label || c.name, icon: iconsMap[c.icon_name || c.icon] || Users, color: c.color_class || c.color }));
 
   // Categories dynamically fetched
   const list = (seg === "helpdesk" ? helpdesk : directory).filter((item) =>
-    item.label.toLowerCase().includes(search.toLowerCase())
+    (item.label || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
