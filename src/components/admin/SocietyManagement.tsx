@@ -30,13 +30,23 @@ export function SocietyManagement() {
     }
 
     try {
-      const { error } = await supabase.functions.invoke("admin-change-password", {
+      const { data, error } = await supabase.functions.invoke("admin-change-password", {
         body: { email, newPassword }
       });
-      if (error) throw error;
+      
+      if (error) {
+        console.error("Full invoke error:", error);
+        throw new Error(error.message || JSON.stringify(error));
+      }
+      
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+      
       toast.success("Manager password changed successfully!");
     } catch (err: any) {
-      toast.error(err.message || "Failed to change password");
+      console.error("Password change error catch block:", err);
+      toast.error(err.message || "Failed to change password. Check console.");
     }
   };
 

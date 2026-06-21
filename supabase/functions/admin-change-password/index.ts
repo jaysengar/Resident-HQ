@@ -37,21 +37,23 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // 1. Find user by email using database query
-    const { data: targetUser, error: listErr } = await adminClient.from("users").select("id").eq("email", email).single()
-    if (listErr || !targetUser) throw new Error("User not found in database")
+    // 1. Find user by email using database query (case-insensitive)
+    const { data: targetUser, error: listErr } = await adminClient.from("users").select("id").ilike("email", email).maybeSingle()
+    if (listErr) throw new Error("Database error while looking up user: " + listErr.message)
+    if (!targetUser) throw new Error("User not found in database for email: " + email)
 
     // 2. Update password
     const { error: updateErr } = await adminClient.auth.admin.updateUserById(targetUser.id, {
       password: newPassword
     })
 
-    if (updateErr) throw updateErr
+    if (updateErr) throw new Error("Auth update failed: " + updateErr.message)
 
     return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json", ...corsHeaders } })
 
   } catch (err: any) {
     console.error(err)
-    return new Response(JSON.stringify({ error: err.message }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } })
+    // Return 200 so the frontend fetch doesn't throw a generic HTTP error and we can read the JSON error message
+    return new Response(JSON.stringify({ error: err.message || "Unknown error occurred" }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } })
   }
 })
