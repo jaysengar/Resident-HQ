@@ -87,17 +87,32 @@ export function ManagerProvider({
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'helpdesk_tickets' },
-          () => fetchTickets()
+          (payload) => {
+            fetchTickets();
+            if (payload.eventType === 'INSERT') {
+              toast.info(`New Ticket: ${payload.new.title}`, { description: `Flat ${payload.new.flat_number || "Unknown"}` });
+            }
+          }
         )
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'noc_requests' },
-          () => fetchNocRequests()
+          (payload) => {
+            fetchNocRequests();
+            if (payload.eventType === 'INSERT') {
+              toast.info(`New NOC Request`, { description: `Flat ${payload.new.flat_number || "Unknown"} requested an NOC.` });
+            }
+          }
         )
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'payments' },
-          () => fetchDashboard()
+          (payload) => {
+            fetchDashboard();
+            if (payload.eventType === 'INSERT') {
+              toast.success(`Payment Received`, { description: `₹${payload.new.amount} from Flat ${payload.new.flat_number || "Unknown"}` });
+            }
+          }
         )
         .on(
           'postgres_changes',

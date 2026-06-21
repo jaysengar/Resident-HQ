@@ -91,22 +91,42 @@ export function GuardProvider({
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'helpdesk_tickets' },
-          () => fetchEntries() // re-fetch when tickets change
+          (payload) => {
+            fetchEntries();
+            if (payload.eventType === 'INSERT') {
+              toast.info(`New Ticket: ${payload.new.title}`, { description: `Flat ${payload.new.flat_number || "Unknown"} raised a new ticket.` });
+            }
+          }
         )
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'visitors' },
-          () => fetchEntries() // re-fetch when visitor status changes
+          (payload) => {
+            fetchEntries();
+            if (payload.eventType === 'INSERT' && payload.new.status === 'pending') {
+              toast.info(`New Visitor Request`, { description: `${payload.new.name} for Flat ${payload.new.flat_number || "Unknown"}` });
+            }
+          }
         )
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'announcements' },
-          () => fetchEntries() // re-fetch when announcements change
+          (payload) => {
+            fetchEntries();
+            if (payload.eventType === 'INSERT') {
+              toast.info(`New Announcement: ${payload.new.title}`);
+            }
+          }
         )
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'noc_requests' },
-          () => fetchEntries() // re-fetch when NOC changes
+          (payload) => {
+            fetchEntries();
+            if (payload.eventType === 'INSERT') {
+              toast.info(`New NOC Request`, { description: `Flat ${payload.new.flat_number || "Unknown"} requested an NOC.` });
+            }
+          }
         )
         .on(
           'postgres_changes',
