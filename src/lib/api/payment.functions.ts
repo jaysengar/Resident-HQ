@@ -188,5 +188,21 @@ export const serverPayBill = createServerFn({ method: "POST" })
 
     if (updateErr) throw new Error("Failed to update bill status: " + updateErr.message);
 
+    // 3. Update flats table dues
+    if (data.flatNumber && data.flatNumber !== "UNKNOWN") {
+      const { data: flatData } = await admin.from("flats")
+        .select("dues_amount")
+        .eq("society_id", data.societyId)
+        .eq("flat_number", data.flatNumber)
+        .single();
+        
+      const currentDues = flatData?.dues_amount || 0;
+      const newDues = Math.max(0, currentDues - data.amount);
+      await admin.from("flats").update({
+        dues_amount: newDues,
+        dues_status: newDues > 0 ? "partial" : "paid"
+      }).eq("society_id", data.societyId).eq("flat_number", data.flatNumber);
+    }
+
     return { success: true };
   });

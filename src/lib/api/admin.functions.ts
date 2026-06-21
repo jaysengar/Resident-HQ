@@ -442,6 +442,21 @@ export const serverGenerateBills = createServerFn({ method: "POST" })
     const { error } = await admin.from("bills").insert(billsToInsert);
     if (error) throw new Error(error.message);
 
+    // 4.5 Update flats table dues
+    for (const flatNo of targetFlats) {
+      const { data: flatData } = await admin.from("flats")
+        .select("dues_amount")
+        .eq("society_id", data.societyId)
+        .eq("flat_number", flatNo)
+        .single();
+      
+      const currentDues = flatData?.dues_amount || 0;
+      await admin.from("flats").update({
+        dues_amount: currentDues + data.amount,
+        dues_status: "unpaid"
+      }).eq("society_id", data.societyId).eq("flat_number", flatNo);
+    }
+
     // 5. Update billing_history
     const now = new Date();
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
