@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
-import admin from 'npm:firebase-admin@11.11.0'
+import admin from 'npm:firebase-admin@12.1.0'
 
 // Initialize Firebase Admin (Only initialize once)
 if (!admin.apps.length) {
@@ -69,14 +69,14 @@ serve(async (req) => {
       return new Response(JSON.stringify({ message: "No tokens found" }), { status: 200, headers: corsHeaders })
     }
 
-    // Send the push notification via Firebase Admin SDK
+    // Send the push notification via Firebase Admin SDK using HTTP v1 API
     const pushTokens = tokens.map(t => t.token);
     const message = {
       notification: { title, body },
       tokens: pushTokens,
     };
 
-    const response = await admin.messaging().sendMulticast(message);
+    const response = await admin.messaging().sendEachForMulticast(message);
     console.log(`Successfully sent message: ${response.successCount} successes, ${response.failureCount} failures.`);
 
     return new Response(
