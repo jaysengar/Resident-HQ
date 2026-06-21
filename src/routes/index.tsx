@@ -491,7 +491,7 @@ function TestimonialsSection() {
 function PricingSection() {
   const plans = [
     { id: "basic", name: "Standard", price: "5,000", desc: "Core gate management and notices.", features: ["Guard App & visitor logs", "Digital notice board", "Resident directory", "Up to 100 flats"], popular: false },
-    { id: "pro", name: "Professional", price: "10,000", desc: "Complete financial automation suite.", features: ["Everything in Standard", "Payment gateway integration", "Document vault & Audit Logs", "Custom data exports", "Unlimited flats"], popular: true },
+    { id: "pro", name: "Professional", price: "10,000", desc: "Complete financial automation suite.", features: ["Everything in Standard", "Instant On-Demand Custom Features", "Payment gateway integration", "Document vault & Audit Logs", "Custom data exports", "Unlimited flats"], popular: true },
   ];
 
   return (

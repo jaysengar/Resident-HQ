@@ -112,6 +112,7 @@ const PLAN_DETAILS = [
     popular: true,
     features: [
       { icon: ShieldCheck, text: "Everything in Digital Security" },
+      { icon: Zap, text: "Instant On-Demand Custom Features" },
       { icon: Wallet, text: "Razorpay Payment Integration" },
       { icon: ClipboardList, text: "Paid/Unpaid Ledger Dashboard" },
       { icon: Headphones, text: "Helpdesk Ticketing System" },
