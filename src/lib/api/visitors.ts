@@ -23,6 +23,31 @@ export async function getActiveEntries(): Promise<ActiveEntry[]> {
   }));
 }
 
+export async function getVisitorHistory(): Promise<ActiveEntry[]> {
+  const { supabase } = await import("@/lib/supabase");
+  const userCtx = await getCurrentUserContext();
+  
+  const { data, error } = await supabase
+    .from("visitors")
+    .select("*")
+    .eq("society_id", userCtx.society_id)
+    .eq("flat_number", userCtx.flat_no || userCtx.flat)
+    .order("entered_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return data.map((d: any) => ({
+    id: d.id,
+    type: d.type as any,
+    name: d.name,
+    company: d.company || undefined,
+    flatNo: d.flat_number,
+    enteredAt: d.entered_at || d.created_at,
+    phone: d.phone || undefined,
+    status: d.status,
+  }));
+}
+
 export async function requestEntry(
   payload: EntryRequest,
 ): Promise<{ status: "approved" | "denied" | "pending"; entryId: string }> {

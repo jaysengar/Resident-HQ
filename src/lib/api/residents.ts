@@ -40,6 +40,28 @@ export async function getResidentProfile() {
   };
 }
 
+export async function updateResidentProfile(payload: { name: string; phone: string }): Promise<{ success: boolean }> {
+  const { supabase } = await import("@/lib/supabase");
+  const userCtx = await getCurrentUserContext();
+  
+  const cleanName = sanitize(payload.name);
+  const cleanPhone = validatePhone(payload.phone);
+  
+  const { error } = await supabase
+    .from("users")
+    .update({ name: cleanName, phone: cleanPhone })
+    .eq("id", userCtx.id);
+    
+  if (error) throw new Error(error.message);
+  
+  // Update auth metadata if needed
+  await supabase.auth.updateUser({
+    data: { name: cleanName, phone: cleanPhone }
+  });
+  
+  return { success: true };
+}
+
 export async function getResidents(): Promise<Resident[]> {
   const { supabase } = await import("@/lib/supabase");
 

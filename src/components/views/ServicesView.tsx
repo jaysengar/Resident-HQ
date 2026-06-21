@@ -22,6 +22,7 @@ import { TicketCard } from "@/components/cards/TicketCard";
 import { NewTicketModal } from "@/components/modals/NewTicketModal";
 import { DocumentUploadModal } from "@/components/modals/DocumentUploadModal";
 import { ServiceProviderModal } from "@/components/modals/ServiceProviderModal";
+import { DirectMessageModal } from "@/components/modals/DirectMessageModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 
@@ -29,6 +30,7 @@ export function ServicesView() {
   const { currentUser, activeTickets, documents, fetchInitialData } = useApp();
   const [seg, setSeg] = useState<"helpdesk" | "directory" | "documents">("helpdesk");
   const [ticketOpen, setTicketOpen] = useState(false);
+  const [msgOpen, setMsgOpen] = useState(false);
   const [dirOpen, setDirOpen] = useState<string | null>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -132,7 +134,22 @@ export function ServicesView() {
                   No services found matching "{search}"
                 </div>
               ) : (
-                list.map((c) => (
+                <>
+                  {seg === "helpdesk" && !search && (
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ y: -2 }}
+                      onClick={() => setMsgOpen(true)}
+                      className="flex flex-col items-center gap-2 rounded-2xl border border-primary/30 bg-primary/10 p-3"
+                      style={{ boxShadow: "var(--shadow-soft)" }}
+                    >
+                      <div className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground">
+                        <Users size={22} />
+                      </div>
+                      <span className="text-xs font-semibold text-primary">Message Manager</span>
+                    </motion.button>
+                  )}
+                  {list.map((c) => (
                   <motion.button
                     key={c.label}
                     whileTap={{ scale: 0.95 }}
@@ -240,6 +257,7 @@ export function ServicesView() {
         onClose={() => setDirOpen(null)}
         category={dirOpen}
       />
+      <DirectMessageModal open={msgOpen} onClose={() => setMsgOpen(false)} />
     </div>
   );
 }

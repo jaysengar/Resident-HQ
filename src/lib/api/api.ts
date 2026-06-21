@@ -18,5 +18,6 @@ export * from "./community";
 export * from "./admin";
 export * from "./noc";
 export * from "./notifications";
+export * from "./messages";
 
 export type { SocietyBranding } from "./society";

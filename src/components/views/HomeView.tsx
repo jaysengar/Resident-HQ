@@ -10,6 +10,7 @@ import { InviteGuestModal } from "@/components/modals/InviteGuestModal";
 import { ActivePollModal } from "@/components/modals/ActivePollModal";
 import { AllNoticesModal } from "@/components/modals/AllNoticesModal";
 import { NocRequestModal } from "@/components/modals/NocRequestModal";
+import { VisitorHistoryModal } from "@/components/modals/VisitorHistoryModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonCard, SkeletonRow } from "@/components/ui/SkeletonCard";
 import { Truck } from "lucide-react";
@@ -27,6 +28,7 @@ export function HomeView() {
   const [inviteOpen, setInviteOpen] = useState(false);
   const [noticesOpen, setNoticesOpen] = useState(false);
   const [nocOpen, setNocOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [inviteType, setInviteType] = useState<"Visitor" | "Delivery">("Visitor");
 
   const actions = [
@@ -138,7 +140,12 @@ export function HomeView() {
       </section>
 
       <section className="mt-8">
-        <SectionTitle title="Gate Alerts" badge={pending.length > 0 ? "Live" : undefined} />
+        <SectionTitle 
+          title="Gate Alerts" 
+          badge={pending.length > 0 ? "Live" : undefined} 
+          action="View History"
+          onAction={() => setHistoryOpen(true)}
+        />
         <div className="mt-4 space-y-3">
           {!dataReady ? (
             // Loading skeletons
@@ -181,6 +188,7 @@ export function HomeView() {
       <ActivePollModal />
       <AllNoticesModal open={noticesOpen} onClose={() => setNoticesOpen(false)} announcements={announcements} />
       <NocRequestModal open={nocOpen} onClose={() => setNocOpen(false)} />
+      <VisitorHistoryModal open={historyOpen} onClose={() => setHistoryOpen(false)} />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Bell, ChevronRight } from "lucide-react";
 import { NotificationPanel } from "@/components/notifications/NotificationPanel";
+import { ProfileSettingsModal } from "@/components/modals/ProfileSettingsModal";
 
 export function TopHeader({
   title,
@@ -13,6 +14,7 @@ export function TopHeader({
   avatar?: string;
 }) {
   const [notifOpen, setNotifOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
   return (
@@ -20,9 +22,12 @@ export function TopHeader({
       <header className="sticky top-0 z-10 flex items-center justify-between bg-background/95 backdrop-blur-xl pt-6 pb-2">
         <div className="flex items-center gap-3 min-w-0">
           {avatar && (
-            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-semibold shadow-[var(--shadow-card)]">
+            <button 
+              onClick={() => setProfileOpen(true)}
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-semibold shadow-[var(--shadow-card)] transition-transform hover:scale-105 active:scale-95"
+            >
               {avatar}
-            </div>
+            </button>
           )}
           <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-widest font-bold text-white/50">{subtitle}</p>
@@ -52,6 +57,10 @@ export function TopHeader({
         open={notifOpen}
         onClose={() => setNotifOpen(false)}
         onUnreadCountChange={setUnreadCount}
+      />
+      <ProfileSettingsModal
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
       />
     </>
   );
