@@ -11,7 +11,7 @@ export async function getActivePoll(): Promise<any> {
     .eq("active", true)
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error || !poll) return null;
 
@@ -24,7 +24,7 @@ export async function getActivePoll(): Promise<any> {
     .select("id")
     .eq("poll_id", poll.id)
     .eq("flat_number", flat)
-    .single();
+    .maybeSingle();
 
   if (vote) return null; // Already voted
 

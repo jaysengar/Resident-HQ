@@ -158,7 +158,7 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
     let channel: any;
     import("@/lib/supabase").then(({ supabase }) => {
       channel = supabase
-        .channel(`resident_realtime_${user.id}`)
+        .channel(`resident_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
         // Visitors — instant gate alerts
         .on(
           "postgres_changes",

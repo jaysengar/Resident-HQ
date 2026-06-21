@@ -37,12 +37,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // 1. Find user by email using Admin API
-    const { data: listUsers, error: listErr } = await adminClient.auth.admin.listUsers()
-    if (listErr) throw listErr
-
-    const targetUser = listUsers.users.find(u => u.email === email)
-    if (!targetUser) throw new Error("User not found")
+    // 1. Find user by email using database query
+    const { data: targetUser, error: listErr } = await adminClient.from("users").select("id").eq("email", email).single()
+    if (listErr || !targetUser) throw new Error("User not found in database")
 
     // 2. Update password
     const { error: updateErr } = await adminClient.auth.admin.updateUserById(targetUser.id, {
