@@ -46,10 +46,13 @@ export function DirectMessageModal({ open, onClose }: { open: boolean; onClose: 
           },
           (payload) => {
             const newMsg = payload.new as DirectMessage;
-            if (newMsg.flat_number === currentUser.flat) {
-              setMessages((prev) => [...prev, newMsg]);
-              setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-            }
+            setMessages((prev) => {
+              // Ensure it belongs to this chat
+              if (prev.length > 0 && prev[0].flat_number !== newMsg.flat_number) return prev;
+              if (prev.find(m => m.id === newMsg.id)) return prev;
+              return [...prev, newMsg];
+            });
+            setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
           }
         )
         .subscribe();
