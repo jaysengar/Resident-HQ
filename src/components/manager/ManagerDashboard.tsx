@@ -14,15 +14,18 @@ import {
 } from "recharts";
 import { useManager } from "@/context/ManagerContext";
 import { CreatePollModal } from "@/components/modals/CreatePollModal";
+import { getManagerPolls } from "@/lib/api/polls";
 
 import { SkeletonCard, SkeletonTable } from "@/components/ui/SkeletonCard";
 
 export function ManagerDashboard() {
   const { stats, monthlyData, loading, fetchDashboard } = useManager();
   const [pollOpen, setPollOpen] = useState(false);
+  const [polls, setPolls] = useState<any[]>([]);
 
   useEffect(() => {
     fetchDashboard();
+    getManagerPolls().then(setPolls).catch(console.error);
   }, [fetchDashboard]);
 
   if (loading || !stats) {
@@ -236,7 +239,65 @@ export function ManagerDashboard() {
         </motion.div>
       </div>
 
-      <CreatePollModal isOpen={pollOpen} onClose={() => setPollOpen(false)} />
+      {/* Polls Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="rounded-3xl border border-white/10 bg-black/40 p-6 backdrop-blur-md"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-lg font-bold text-white">Society Polls</h3>
+            <p className="text-xs text-zinc-400">Recent polls and their results</p>
+          </div>
+        </div>
+        
+        {polls.length === 0 ? (
+          <div className="text-center text-sm text-zinc-500 py-6">No polls created yet.</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {polls.map((p) => (
+              <div key={p.id} className="rounded-2xl border border-white/5 bg-white/5 p-4">
+                <div className="flex justify-between items-start mb-4">
+                  <h4 className="text-sm font-semibold text-white leading-tight">{p.question}</h4>
+                  <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shrink-0 ${p.active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-500/20 text-zinc-400'}`}>
+                    {p.active ? 'Live' : 'Closed'}
+                  </span>
+                </div>
+                
+                <div className="space-y-3">
+                  {p.results.map((r: any, idx: number) => {
+                    const pct = p.total_votes > 0 ? Math.round((r.votes / p.total_votes) * 100) : 0;
+                    return (
+                      <div key={idx} className="relative">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-zinc-300 font-medium">{r.option}</span>
+                          <span className="text-zinc-400">{r.votes} votes ({pct}%)</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${pct}%` }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            className="h-full bg-violet-500 rounded-full"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="mt-4 pt-3 border-t border-white/10 flex justify-between text-[10px] text-zinc-500 font-medium uppercase tracking-widest">
+                  <span>Total: {p.total_votes} votes</span>
+                  <span>{new Date(p.created_at).toLocaleDateString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.section>
+
+      <CreatePollModal isOpen={pollOpen} onClose={() => { setPollOpen(false); getManagerPolls().then(setPolls).catch(console.error); }} />
     </div>
   );
 }

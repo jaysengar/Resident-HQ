@@ -61,3 +61,29 @@ export async function createPoll(question: string, options: string[]): Promise<v
     },
   });
 }
+
+export async function getManagerPolls(): Promise<any[]> {
+  const { supabase } = await import("@/lib/supabase");
+  const userCtx = await getCurrentUserContext();
+
+  const { data: polls, error } = await supabase
+    .from("polls")
+    .select("*, poll_votes(option_index)")
+    .eq("society_id", userCtx.society_id)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return polls.map((p: any) => {
+    const results = p.options.map((opt: string, idx: number) => {
+      const votes = p.poll_votes.filter((v: any) => v.option_index === idx).length;
+      return { option: opt, votes };
+    });
+    
+    return {
+      ...p,
+      results,
+      total_votes: p.poll_votes.length
+    };
+  });
+}

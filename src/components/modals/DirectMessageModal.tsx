@@ -70,8 +70,12 @@ export function DirectMessageModal({ open, onClose }: { open: boolean; onClose: 
     setInput("");
     
     try {
-      await sendDirectMessage(text);
-      // The real-time subscription will append it to the list
+      const msg = await sendDirectMessage(text);
+      setMessages((prev) => {
+        if (prev.find(m => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     } catch (e) {
       console.error(e);
       // Revert input if failed

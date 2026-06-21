@@ -114,8 +114,21 @@ export function ManagerMessages() {
     
     try {
       const msg = await sendDirectMessage(text, activeFlat);
-      // We rely on websocket subscription to append it generally, but we can do it optimistically too.
-      // Doing nothing here lets the subscription handle it and avoids double messages if strict.
+      setMessages((prev) => {
+        if (prev.find(m => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+      
+      // Update conversation list
+      setConversations((prev) => {
+        const filtered = prev.filter(c => c.flat_number !== msg.flat_number);
+        return [{
+          flat_number: msg.flat_number,
+          last_message: msg.content,
+          last_message_at: msg.created_at
+        }, ...filtered];
+      });
     } catch (e) {
       console.error(e);
       setInput(text);
