@@ -43,20 +43,8 @@ export async function sendDirectMessage(content: string, targetFlat?: string): P
 
   if (error) throw new Error(error.message);
 
-  // If a manager sends a message to a resident, create a notification for them
+  // If a manager sends a message to a resident, trigger native push notification
   if (userCtx.role === "manager" && targetFlat) {
-    const { error: notifError } = await supabase.from("notifications").insert({
-      society_id: userCtx.society_id,
-      flat_number: targetFlat,
-      title: "New Message from Manager",
-      body: content.length > 50 ? content.substring(0, 47) + "..." : content,
-      type: "announcement", // using announcement to pass the DB CHECK constraint
-    });
-    if (notifError) {
-      console.error("Failed to insert notification:", notifError);
-    }
-
-    // Trigger native push notification to the resident's phone
     supabase.functions.invoke("send-notification", {
       body: {
         title: "New Message from Manager",
