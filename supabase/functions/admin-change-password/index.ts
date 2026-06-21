@@ -12,17 +12,22 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get('Authorization')!
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) throw new Error("Missing Authorization header")
     
     // Check caller is admin (optional extra security since the function itself is public)
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
+      { 
+        auth: { persistSession: false },
+        global: { headers: { Authorization: authHeader } } 
+      }
     )
 
-    const { data: { user }, error: authErr } = await supabaseClient.auth.getUser()
-    if (authErr || !user) throw new Error("Unauthorized")
+    const { data: { user }, error: authErr } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''))
+    if (authErr) throw new Error("Auth Error: " + authErr.message)
+    if (!user) throw new Error("Unauthorized: User not found from token")
 
     // Check if caller is super admin
     const { data: callerData } = await supabaseClient.from('users').select('role').eq('id', user.id).single()
@@ -34,7 +39,8 @@ serve(async (req) => {
     // Use service role to update the target user
     const adminClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { persistSession: false } }
     )
 
     // 1. Find user by email using database query (case-insensitive)
