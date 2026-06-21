@@ -42,9 +42,10 @@ serve(async (req) => {
     if (listErr) throw new Error("Database error while looking up user: " + listErr.message)
     if (!targetUser) throw new Error("User not found in database for email: " + email)
 
-    // 2. Update password
+    // 2. Update password and auto-confirm the account so they can login immediately
     const { error: updateErr } = await adminClient.auth.admin.updateUserById(targetUser.id, {
-      password: newPassword
+      password: newPassword,
+      email_confirm: true
     })
 
     if (updateErr) throw new Error("Auth update failed: " + updateErr.message)
