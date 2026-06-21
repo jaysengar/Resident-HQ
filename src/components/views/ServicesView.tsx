@@ -79,34 +79,32 @@ export function ServicesView() {
       <TopHeader title="Services" subtitle="Helpdesk & local pros" />
 
       <div
-        className="mt-5 flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3"
-        style={{ boxShadow: "var(--shadow-soft)" }}
+        className="mt-6 flex items-center gap-3 rounded-full border border-border/50 bg-card/60 backdrop-blur-xl px-5 py-3.5 shadow-[0_2px_12px_rgb(0,0,0,0.02)] transition-colors focus-within:bg-card/80 focus-within:border-primary/30"
       >
-        <Search size={18} className="text-muted-foreground" />
+        <Search size={20} className="text-muted-foreground" weight="bold" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="What do you need help with?"
-          className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          className="flex-1 bg-transparent text-[15px] font-medium text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
       </div>
 
-      <div className="mt-4 grid grid-cols-3 rounded-2xl bg-secondary p-1 text-sm font-medium">
+      <div className="mt-5 grid grid-cols-3 rounded-[20px] bg-secondary/50 p-1.5 text-sm font-bold backdrop-blur-md border border-border/30">
         {(["helpdesk", "directory", "documents"] as const).map((s) => (
           <button
             key={s}
             onClick={() => setSeg(s)}
-            className="relative rounded-xl px-2 py-2.5 transition-colors text-xs"
+            className="relative rounded-2xl px-2 py-3 transition-colors text-xs uppercase tracking-wider"
           >
             {seg === s && (
               <motion.div
                 layoutId="seg-pill"
-                className="absolute inset-0 rounded-xl bg-card"
-                style={{ boxShadow: "var(--shadow-soft)" }}
+                className="absolute inset-0 rounded-2xl bg-card shadow-[0_2px_8px_rgb(0,0,0,0.08)]"
                 transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
               />
             )}
-            <span className={`relative ${seg === s ? "text-foreground" : "text-muted-foreground"} whitespace-nowrap`}>
+            <span className={`relative z-10 ${seg === s ? "text-foreground" : "text-muted-foreground"} whitespace-nowrap`}>
               {s === "helpdesk" ? "Helpdesk" : s === "directory" ? "Directory" : "Documents"}
             </span>
           </button>
@@ -120,15 +118,15 @@ export function ServicesView() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mt-5"
+            className="mt-6"
           >
             <SectionTitle title="Categories" />
-            <div className="mt-3 grid grid-cols-3 gap-3">
+            <div className="mt-4 grid grid-cols-3 gap-4">
               {categoriesLoading ? (
                 [1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="flex flex-col items-center gap-2 rounded-2xl border border-border/60 bg-card p-3">
-                    <div className="h-12 w-12 rounded-xl bg-secondary animate-pulse" style={{ animationDelay: `${i * 0.08}s` }} />
-                    <div className="h-3 w-14 rounded-full bg-secondary animate-pulse" />
+                  <div key={i} className="flex flex-col items-center gap-3 rounded-[24px] border border-border/40 bg-card/40 backdrop-blur-md p-4">
+                    <div className="h-14 w-14 rounded-2xl bg-secondary animate-pulse" style={{ animationDelay: `${i * 0.08}s` }} />
+                    <div className="h-3 w-16 rounded-full bg-secondary animate-pulse" />
                   </div>
                 ))
               ) : list.length === 0 ? (
@@ -150,21 +148,20 @@ export function ServicesView() {
                         }
                         setMsgOpen(true);
                       }}
-                      className={`flex flex-col items-center gap-2 rounded-2xl border p-3 ${
+                      className={`flex flex-col items-center justify-center gap-3 rounded-[24px] border p-4 backdrop-blur-md transition-all ${
                         user?.subscriptionPlan === "Basic" 
-                          ? "border-muted/30 bg-muted/10 opacity-75" 
-                          : "border-primary/30 bg-primary/10"
+                          ? "border-muted/30 bg-muted/5 opacity-75 grayscale" 
+                          : "border-primary/20 bg-primary/5 hover:bg-primary/10 hover:shadow-[0_4px_20px_rgba(var(--color-primary),0.1)]"
                       }`}
-                      style={{ boxShadow: "var(--shadow-soft)" }}
                     >
-                      <div className={`grid h-12 w-12 place-items-center rounded-xl ${
+                      <div className={`grid h-14 w-14 place-items-center rounded-2xl ${
                         user?.subscriptionPlan === "Basic"
-                          ? "bg-muted text-muted-foreground"
-                          : "bg-primary text-primary-foreground"
+                          ? "bg-muted/20 text-muted-foreground"
+                          : "bg-primary/10 text-primary"
                       }`}>
-                        <Users size={24} weight="fill" />
+                        <Users size={28} weight="duotone" />
                       </div>
-                      <span className={`text-xs font-semibold ${
+                      <span className={`text-[11px] font-bold uppercase tracking-wider text-center ${
                         user?.subscriptionPlan === "Basic" ? "text-muted-foreground" : "text-primary"
                       }`}>
                         {user?.subscriptionPlan === "Basic" ? "Chat (Locked)" : "Message Manager"}
@@ -180,13 +177,12 @@ export function ServicesView() {
                       if (seg === "helpdesk") setTicketOpen(true);
                       else setDirOpen(c.label);
                     }}
-                    className="flex flex-col items-center gap-2 rounded-2xl border border-border/60 bg-card p-3"
-                    style={{ boxShadow: "var(--shadow-soft)" }}
+                    className="flex flex-col items-center justify-center gap-3 rounded-[24px] border border-border/40 bg-card/40 backdrop-blur-md p-4 transition-all hover:bg-card/60 hover:shadow-[0_2px_12px_rgb(0,0,0,0.03)]"
                   >
-                    <div className={`grid h-12 w-12 place-items-center rounded-xl ${c.color}`}>
-                      <c.icon size={24} weight="duotone" />
+                    <div className={`grid h-14 w-14 place-items-center rounded-2xl ${c.color.replace('bg-', 'bg-').replace('/10', '/15')}`}>
+                      <c.icon size={28} weight="duotone" />
                     </div>
-                    <span className="text-xs font-medium text-foreground">{c.label}</span>
+                    <span className="text-[11px] font-bold tracking-wide text-foreground text-center leading-tight">{c.label}</span>
                   </motion.button>
                   ))}
                 </>
@@ -199,43 +195,44 @@ export function ServicesView() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mt-5"
+            className="mt-6"
           >
             <div className="flex items-center justify-between">
               <SectionTitle title="Society Documents" />
               {currentUser.role === "manager" && (
                 <button
                   onClick={() => setUploadOpen(true)}
-                  className="text-xs font-semibold text-primary hover:underline"
+                  className="text-[11px] font-bold tracking-wider uppercase text-primary hover:text-primary/80 transition-colors"
                 >
                   + Upload
                 </button>
               )}
             </div>
-            <div className="mt-3 space-y-3">
+            <div className="mt-4 space-y-3">
               {documents.length > 0 ? (
                 documents.map((doc) => (
-                  <div key={doc.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                      <FileText size={20} weight="fill" />
+                  <div key={doc.id} className="flex items-center gap-4 rounded-[20px] border border-border/50 bg-card/60 backdrop-blur-xl p-4 shadow-[0_2px_12px_rgb(0,0,0,0.02)]">
+                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
+                      <FileText size={24} weight="duotone" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-foreground">{doc.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{doc.category}</p>
+                      <p className="text-sm font-bold tracking-tight text-foreground">{doc.title}</p>
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mt-1">{doc.category}</p>
                     </div>
                     <motion.a
                       whileTap={{ scale: 0.9 }}
                       href={doc.url}
                       download
-                      className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-secondary text-foreground hover:bg-accent"
+                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary/80 text-foreground hover:bg-secondary transition-colors"
                     >
-                      <Download size={16} weight="bold" />
+                      <Download size={18} weight="bold" />
                     </motion.a>
                   </div>
                 ))
               ) : (
-                <div className="rounded-2xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-                  No documents uploaded yet.
+                <div className="rounded-[20px] border border-dashed border-border/60 bg-card/30 backdrop-blur-sm p-6 text-center">
+                  <FileText size={32} weight="duotone" className="mx-auto text-muted-foreground/50 mb-3" />
+                  <p className="text-sm font-medium text-muted-foreground">No documents uploaded yet.</p>
                 </div>
               )}
             </div>

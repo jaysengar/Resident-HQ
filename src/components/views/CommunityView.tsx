@@ -18,21 +18,19 @@ export function CommunityView() {
 
       <button
         onClick={() => setOpen(true)}
-        className="mt-5 w-full rounded-3xl border border-border/60 bg-card p-4 text-left transition-colors hover:bg-accent/50"
-        style={{ boxShadow: "var(--shadow-soft)" }}
+        className="mt-6 w-full rounded-[24px] border border-border/50 bg-card/60 backdrop-blur-xl p-4 text-left shadow-[0_2px_12px_rgb(0,0,0,0.02)] transition-all hover:bg-card/80 group"
       >
-        <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-sm font-semibold">
+        <div className="flex items-center gap-4">
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-black text-lg shadow-[0_4px_12px_rgba(var(--color-primary),0.2)]">
             {currentUser.name[0]}
           </div>
-          <span className="flex-1 text-sm text-muted-foreground">
+          <span className="flex-1 text-[15px] font-medium text-muted-foreground group-hover:text-foreground transition-colors">
             Share something with the colony…
           </span>
           <span
-            className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
-            style={{ boxShadow: "var(--shadow-card)" }}
+            className="flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-primary shadow-sm"
           >
-            <Plus size={14} weight="bold" /> Post
+            <Plus size={16} weight="bold" /> Post
           </span>
         </div>
       </button>

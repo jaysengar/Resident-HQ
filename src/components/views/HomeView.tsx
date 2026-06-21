@@ -78,57 +78,54 @@ export function HomeView() {
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.05 }}
-        className="mt-6 rounded-[28px] bg-card/80 backdrop-blur-xl p-6 border border-border/50 shadow-elevated relative overflow-hidden"
+        className="mt-6 rounded-[32px] bg-card/60 backdrop-blur-3xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] relative overflow-hidden"
       >
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
-            <ShieldCheck size={16} weight="fill" />
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-center justify-between mb-4 relative z-10">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full uppercase tracking-widest">
+            <ShieldCheck size={14} weight="bold" />
             <span>Verified</span>
           </div>
-          <p className="text-sm font-medium text-muted-foreground">Flat {currentUser.flat}</p>
+          <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground">Flat {currentUser.flat}</p>
         </div>
-        <div className="mt-2 flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{currentUser.occupancyType}</span>
-          <span className="w-1 h-1 rounded-full bg-border" />
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{currentUser.flatType}</span>
+        
+        <div className="relative z-10 mt-2">
+          <h2 className="text-3xl font-black tracking-tight text-foreground">{currentUser.name}</h2>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">{currentUser.societyName}</span>
+            <span className="w-1 h-1 rounded-full bg-border" />
+            <span className="text-xs font-medium text-muted-foreground">{currentUser.occupancyType}</span>
+          </div>
         </div>
 
-        <div className="mt-6 flex flex-col gap-3 bg-secondary/40 rounded-[20px] p-5 border border-border/30">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Name</span>
-            <span className="text-xs font-semibold text-foreground/90">{currentUser.name}</span>
-          </div>
-          <div className="h-px w-full bg-border/40" />
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Society</span>
-            <span className="text-xs font-semibold text-foreground/90">{currentUser.societyName}</span>
-          </div>
-        </div>
-        <div className="absolute -right-12 -bottom-12 opacity-[0.03] dark:opacity-[0.05] pointer-events-none">
-          <ShieldCheck size={200} weight="fill" />
+        <div className="mt-6 flex gap-3 relative z-10">
+          <button onClick={() => setTab("dues")} className="flex-1 bg-primary text-primary-foreground font-bold text-sm py-3.5 rounded-2xl shadow-md hover:bg-primary/90 transition-all active:scale-95">
+            View Dues
+          </button>
+          <button onClick={() => setTicketOpen(true)} className="flex-1 bg-secondary text-secondary-foreground font-bold text-sm py-3.5 rounded-2xl border border-border/50 hover:bg-secondary/80 transition-all active:scale-95">
+            Raise Ticket
+          </button>
         </div>
       </motion.div>
 
       <section className="mt-8">
         <SectionTitle title="Quick Actions" />
-        <div className="mt-5 grid grid-cols-3 gap-4">
+        <div className="mt-4 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide px-1">
           {actions.map((a, i) => (
-              <motion.button
+            <motion.button
               key={a.label}
-              initial={{ opacity: 0, y: 15, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.1 + i * 0.05 }}
               whileTap={{ scale: 0.92 }}
               onClick={a.onClick}
-              className="group flex flex-col items-center gap-3"
+              className="snap-start shrink-0 flex flex-col items-center gap-2"
             >
-              <div
-                className={`grid h-[60px] w-[60px] place-items-center rounded-2xl bg-gradient-to-br ${a.tint} text-white shadow-lg transition-transform duration-300 group-hover:shadow-xl group-hover:scale-105 relative overflow-hidden`}
-              >
-                <div className="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100" />
-                <a.icon size={24} strokeWidth={2} className="relative z-10 drop-shadow-sm" />
+              <div className="grid h-[72px] w-[72px] place-items-center rounded-[24px] bg-card/80 border border-border/50 shadow-sm transition-all duration-300 hover:shadow-md relative overflow-hidden group">
+                <div className={`absolute inset-0 bg-gradient-to-br ${a.tint} opacity-5 group-hover:opacity-10 transition-opacity`} />
+                <a.icon size={28} weight="duotone" className={`relative z-10 text-foreground`} />
               </div>
-              <span className="text-[11px] font-bold tracking-wide text-foreground/70 text-center leading-tight">
+              <span className="text-[11px] font-semibold tracking-wide text-muted-foreground text-center">
                 {a.label}
               </span>
             </motion.button>

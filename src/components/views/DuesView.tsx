@@ -23,9 +23,9 @@ export function DuesView() {
 
       <DuesCard onPay={() => {}} />
 
-      <section className="mt-7">
+      <section className="mt-8">
         <SectionTitle title="Pending Bills" />
-        <div className="mt-3 space-y-2.5">
+        <div className="mt-4 space-y-3">
           {!dataReady ? (
             <>
               <SkeletonRow />
@@ -45,27 +45,26 @@ export function DuesView() {
                 layout
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4"
-                style={{ boxShadow: "var(--shadow-soft)" }}
+                className="flex items-center gap-4 rounded-[20px] border border-border/50 bg-card/60 backdrop-blur-xl p-4 shadow-[0_2px_12px_rgb(0,0,0,0.02)] transition-all hover:bg-card/80"
               >
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-destructive/10 text-destructive">
-                  <Receipt size={20} weight="fill" />
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-destructive/10 text-destructive">
+                  <Receipt size={24} weight="duotone" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-foreground">{b.title}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm font-bold tracking-tight text-foreground">{b.title}</p>
+                  <p className="mt-1 text-xs font-medium text-muted-foreground">
                     Due: {new Date(b.due_date).toLocaleDateString("en-IN")}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-foreground">₹{Number(b.amount).toLocaleString("en-IN")}</p>
+                <div className="text-right flex flex-col items-end">
+                  <p className="text-base font-black text-foreground">₹{Number(b.amount).toLocaleString("en-IN")}</p>
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => {
                       setSelectedBill(b);
                       setPayOpen(true);
                     }}
-                    className="mt-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold text-primary"
+                    className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
                   >
                     Pay Now
                   </motion.button>
@@ -76,9 +75,9 @@ export function DuesView() {
         </div>
       </section>
 
-      <section className="mt-7 pb-24">
+      <section className="mt-8 pb-24">
         <SectionTitle title="Transaction History" />
-        <div className="mt-3 space-y-2.5">
+        <div className="mt-4 space-y-3">
           {!dataReady ? (
             <>
               <SkeletonRow />
@@ -97,21 +96,19 @@ export function DuesView() {
                 layout
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                whileHover={{ x: 2 }}
-                className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4"
-                style={{ boxShadow: "var(--shadow-soft)" }}
+                className="flex items-center gap-4 rounded-[20px] border border-border/50 bg-card/60 backdrop-blur-xl p-4 shadow-[0_2px_12px_rgb(0,0,0,0.02)] transition-all hover:bg-card/80"
               >
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-success/10 text-success">
-                  <CheckCircle size={20} weight="fill" />
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-success/10 text-success">
+                  <CheckCircle size={24} weight="duotone" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-foreground">{t.title}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm font-bold tracking-tight text-foreground">{t.title}</p>
+                  <p className="mt-1 text-xs font-medium text-muted-foreground">
                     {t.date} • {t.method}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-foreground">₹{t.amount}</p>
+                <div className="text-right flex flex-col items-end">
+                  <p className="text-sm font-black text-foreground">₹{t.amount}</p>
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => {
@@ -125,7 +122,7 @@ export function DuesView() {
                       URL.revokeObjectURL(url);
                       toast.success("Invoice downloaded");
                     }}
-                    className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-primary"
+                    className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-primary hover:text-primary/80 transition-colors"
                   >
                     <DownloadSimple size={14} weight="bold" /> Invoice
                   </motion.button>
