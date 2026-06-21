@@ -127,13 +127,23 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
         occupancyType: profile.occupancy_type || "Owner",
         society_id: profile.society_id || u.society_id || "",
       }));
-      setTransactions(txns.map(t => ({
-        id: t.id,
-        title: `${t.month} Maintenance`,
-        date: new Date(t.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
-        method: t.method,
-        amount: Number(t.amount).toLocaleString("en-IN")
-      })));
+      setTransactions(txns.map(t => {
+        // Try to match the payment to a paid bill (by amount and roughly same time)
+        // This avoids needing a database migration for a new column in payments
+        const paymentDate = new Date(t.created_at);
+        const matchingBill = residentBills.find(b => 
+          b.status === "paid" && 
+          Number(b.amount) === Number(t.amount) &&
+          Math.abs(new Date(b.updated_at || b.created_at).getTime() - paymentDate.getTime()) < 1000 * 60 * 60 * 24 * 7 // within 7 days
+        );
+        return {
+          id: t.id,
+          title: matchingBill?.title || `${t.month} Maintenance`,
+          date: paymentDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+          method: t.method,
+          amount: Number(t.amount).toLocaleString("en-IN")
+        };
+      }));
       // Only show tickets/entries related to this resident's flat
       // Wait, getHelpdeskTickets currently returns all tickets for society
       // For Resident, we should ideally filter on the backend.
@@ -341,13 +351,21 @@ export function AppProvider({ children, colonySlug }: { children: ReactNode; col
         ]);
         setBills(bs);
         setCurrentUser(u => ({ ...u, balance: bs.filter(b => b.status !== "paid").reduce((acc, curr) => acc + Number(curr.amount), 0) }));
-        setTransactions(txns.map(t => ({
-          id: t.id,
-          title: `${t.month} Maintenance`,
-          date: new Date(t.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
-          method: t.method,
-          amount: Number(t.amount).toLocaleString("en-IN")
-        })));
+        setTransactions(txns.map(t => {
+          const paymentDate = new Date(t.created_at);
+          const matchingBill = bs.find(b => 
+            b.status === "paid" && 
+            Number(b.amount) === Number(t.amount) &&
+            Math.abs(new Date(b.updated_at || b.created_at).getTime() - paymentDate.getTime()) < 1000 * 60 * 60 * 24 * 7
+          );
+          return {
+            id: t.id,
+            title: matchingBill?.title || `${t.month} Maintenance`,
+            date: paymentDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+            method: t.method,
+            amount: Number(t.amount).toLocaleString("en-IN")
+          };
+        }));
       } catch (e) {
         console.error(e);
       }
