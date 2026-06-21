@@ -34,17 +34,17 @@ export function ManagerMessages() {
     fetchConversations();
     
     // Subscribe to new messages across the society
-    if (user?.user_metadata?.society_id) {
+    if (user?.societyId) {
       import("@/lib/supabase").then(({ supabase }) => {
         channel = supabase
-          .channel(`manager_dm_${user.user_metadata.society_id}`)
+          .channel(`manager_dm_${user.societyId}`)
           .on(
             "postgres_changes",
             {
               event: "INSERT",
               schema: "public",
               table: "direct_messages",
-              filter: `society_id=eq.${user.user_metadata.society_id}`
+              filter: `society_id=eq.${user.societyId}`
             },
             (payload) => {
               const newMsg = payload.new as DirectMessage;
@@ -83,7 +83,7 @@ export function ManagerMessages() {
         import("@/lib/supabase").then(({ supabase }) => supabase.removeChannel(channel));
       }
     };
-  }, [user?.user_metadata?.society_id]);
+  }, [user?.societyId]);
 
   // Fetch messages for the selected flat
   useEffect(() => {
