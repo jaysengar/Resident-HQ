@@ -49,7 +49,7 @@ export async function sendDirectMessage(content: string, targetFlat?: string): P
       society_id: userCtx.society_id,
       flat_number: targetFlat,
       title: "New Message from Manager",
-      message: content.length > 50 ? content.substring(0, 47) + "..." : content,
+      body: content.length > 50 ? content.substring(0, 47) + "..." : content,
       type: "message", // custom type for UI if needed
     });
   }
